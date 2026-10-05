@@ -138,6 +138,11 @@ header h1:after{content:" ♡";color:#c9566f}
 .memory-hint{display:block;margin-top:8px;font:600 13px Caveat,cursive;color:#a16c77}
 @media(max-width:520px){.memory-orbit{height:285px}.memory-center{width:90px;height:90px;font-size:22px}.memory-dot{font-size:13px;padding:8px 10px}.memory-dot:nth-of-type(1){left:4%;top:12%}.memory-dot:nth-of-type(2){right:4%;top:12%}.memory-dot:nth-of-type(3){left:4%;bottom:12%}.memory-dot:nth-of-type(4){right:4%;bottom:12%}}
 
+
+/* mobile soundtrack: keep the real Spotify embed tappable so iOS/Android can start it */
+#spotifyBackgroundPlayer{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(360px,calc(100vw - 24px));z-index:12;transition:opacity .35s,transform .35s}
+#spotifyBackgroundPlayer.music-ready{opacity:1!important;pointer-events:auto!important}
+@media(max-width:600px){#spotifyBackgroundPlayer{bottom:10px;width:calc(100vw - 20px)}#spotifyBackgroundPlayer iframe{max-height:80px}}
 </style>
 </head>
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
@@ -368,29 +373,34 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
-/* opening the scrapbook starts a randomized Spotify track through Spotify's Embed API */
+/* always reopen at the cover/top instead of restoring an old mobile scroll position */
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+const resetScrapbookTop=()=>{document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0)};
+resetScrapbookTop();
+addEventListener('load',()=>setTimeout(resetScrapbookTop,0));
+addEventListener('pageshow',()=>setTimeout(resetScrapbookTop,0));
+
+/* randomized Spotify soundtrack; desktop attempts play immediately, mobile keeps the real player visible for the browser-required tap */
 (function(){
- const T=window.TRACKS||[], enter=document.getElementById('enterLove');
+ const T=window.TRACKS||[],enter=document.getElementById('enterLove');
  let last=localStorage.getItem('lastLoveTrack'),pool=T.filter(id=>id!==last);
  if(!pool.length)pool=T;
  const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
  if(pick)localStorage.setItem('lastLoveTrack',pick);
  let controller=null,wantsPlay=false;
- const host=document.createElement('div');host.id='spotifyBackgroundPlayer';host.style.cssText='position:fixed;left:10px;bottom:10px;width:300px;max-width:calc(100vw - 20px);z-index:7;opacity:0;pointer-events:none;transition:opacity .35s';
+ const host=document.createElement('div');host.id='spotifyBackgroundPlayer';host.style.opacity='0';host.style.pointerEvents='none';
  document.body.appendChild(host);
  window.onSpotifyIframeApiReady=(IFrameAPI)=>{
    if(!pick)return;
-   IFrameAPI.createController(host,{uri:'spotify:track:'+pick,width:'100%',height:80,theme:'dark'},c=>{
-     controller=c;
-     if(wantsPlay){try{controller.play()}catch(_){}}
+   IFrameAPI.createController(host,{uri:'spotify:track:'+pick,width:'100%',height:80,theme:'dark'},ctl=>{
+     controller=ctl;
+     if(wantsPlay){host.classList.add('music-ready');try{controller.play()}catch(_){}}
    });
  };
  enter.addEventListener('click',()=>{
    document.getElementById('loveCover').classList.add('opened');
-   wantsPlay=true;
-   host.style.opacity='.92';host.style.pointerEvents='auto';
+   resetScrapbookTop();wantsPlay=true;host.classList.add('music-ready');
    if(controller){try{controller.play()}catch(_){}}
-   setTimeout(()=>{host.style.opacity='.18'},4500);
  },{once:true});
 })();
 

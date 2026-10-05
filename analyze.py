@@ -45,7 +45,7 @@ def kw(rx):
     for r in rows:
         if re.search(rx,r[2],re.I):res[nm(r[1])][r[0].strftime('%Y-%m')]+=1
     return {w:{'total':sum(c.values()),'monthly':dict(sorted(c.items()))} for w,c in res.items()}
-RX={'love':r'love you|luv u|love u|i love','miss':r'miss you|miss u|yaad','sorry':r'sorry|maaf','gussa':r'gussa|naraz|naaraz','gm':r'good morning|\bgm\b','gn':r'good night|\bgn\b','khana':r'khana|khaya|khaa liya|kha liya','sojao':r'so ja|sojao|so jao|so jaa','reach':r'reach','dawai':r'dawai|medicine|tablet|dawa\b','paani':r'paani|pani piyo|water','tc':r'take care|tc\b'}
+RX={'love':r'\b(love|luv|lub)\s+(you|u|uu|youu|uuu|yu)\b|\bily\b','miss':r'miss you|miss u\b|miss uu|missing you','sorry':r'sorry|maaf','gussa':r'gussa|naraz|naaraz','gm':r'good morning|\bgm\b','gn':r'good night|\bgn\b','khana':r'khana|khaya|khaa liya|kha liya','sojao':r'so ja|sojao|so jao|so jaa','reach':r'reach','dawai':r'dawai|medicine|tablet|dawa\b','heart':r'[❤♥💕💖💗💘💞💓💝🫶]','paani':r'paani|pani piyo|water','tc':r'take care|\btc\b'}
 out['kw']={k:kw(v) for k,v in RX.items()};out['rx']=RX
 # late night 0-5am
 out['night']={w:sum(1 for r in rows if nm(r[1])==w and r[0].hour<5) for w in('khushi','harshil')}
@@ -95,6 +95,51 @@ add(first(K,r'miss you|miss u\b'),'her first miss you',"2026-10-09",K)
 add(first(H,r'^I love youuu$'),'the first I love you in our chat',"2026-10-10",H)
 add(first(K,r'\b(love|luv|lub)\s+(you|u|uu|youu|uuu)\b'),'her first I love you',"2026-10-11",K)
 out['firsts']=F
+
+import statistics as ST
+# reply times (minutes, same-conversation gaps <= 2h), median per month
+isT=lambda r:not re.search(r'call|omitted|attached|deleted',r[2])
+rt={'khushi':{},'harshil':{}}
+for p,q in zip(rows,rows[1:]):
+    if p[1]!=q[1] and isT(p) and isT(q):
+        g=(q[0]-p[0]).total_seconds()/60
+        if g<=120:rt[nm(q[1])].setdefault(q[0].strftime('%Y-%m'),[]).append(g)
+out['reply']={w:{m:round(ST.median(v),1) for m,v in sorted(d.items())} for w,d in rt.items()}
+allr={w:[x for v in d.values() for x in v] for w,d in rt.items()}
+out['reply_all']={w:round(ST.median(v),1) for w,v in allr.items()}
+# night monthly
+nmo={'khushi':C.Counter(),'harshil':C.Counter()}
+for r in rows:
+    if r[0].hour<5:nmo[nm(r[1])][r[0].strftime('%Y-%m')]+=1
+out['night_m']={w:dict(sorted(c.items())) for w,c in nmo.items()}
+# calls detail
+vm={}
+bk=[0,0,0,0,0]
+for d,t,s in cal:
+    x=vm.setdefault(d.strftime('%Y-%m'),{'Video':0,'Voice':0});x[t]+=s/3600
+    m=s/60;bk[0 if m<10 else 1 if m<30 else 2 if m<60 else 3 if m<120 else 4]+=1
+out['calls']['vv']={k:{t:round(v,1) for t,v in x.items()} for k,x in sorted(vm.items())}
+out['calls']['buckets']=bk
+# streaks
+st=[];cur=0;s0=None
+for d in alld+[None]:
+    if d and D(d) in days:
+        if cur==0:s0=d
+        cur+=1
+    else:
+        if cur:st.append((cur,D(s0)))
+        cur=0
+out['streaks']=[{'n':n_,'from':s_} for n_,s_ in sorted(st,reverse=True)[:5]]
+# first texter by month
+ft={}
+for dkey,r in {D(r[0]):r for r in reversed(rows)}.items():pass
+seen=set();fm={}
+for r in rows:
+    k=D(r[0])
+    if k in seen:continue
+    seen.add(k);x=fm.setdefault(r[0].strftime('%Y-%m'),{'khushi':0,'harshil':0});x[nm(r[1])]+=1
+out['first_m']=dict(sorted(fm.items()))
+
 s=json.dumps(out,ensure_ascii=False,separators=(',',':'));open('data.js','w').write('window.DATA='+s+';')
 print({k:out[k] for k in('meta','night','first_texter','mile','trip_cands')},out['calls']['n'],out['calls']['hours'],out['calls']['longest_min'],out['emoji'],out['kw']['love'].keys())
 for c in cb[:6]:print(c)

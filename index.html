@@ -16,7 +16,11 @@ header h1{font:600 clamp(32px,7vw,56px)/1.1 Fraunces,Georgia,serif;margin:0;lett
 header p{font:500 clamp(19px,4vw,24px) Caveat,cursive;color:var(--mute);margin:10px 0 0}
 .cd{position:fixed;top:calc(8px + env(safe-area-inset-top,0));right:8px;z-index:9;background:#fffefbee;border:1px solid var(--line);border-radius:10px;padding:5px 11px;font:600 17px/1.2 Caveat,cursive;text-align:right;box-shadow:0 4px 12px #4a3f2a1a}.cd b{font:600 15px Nunito,sans-serif;font-variant-numeric:tabular-nums;color:var(--rose)}
 .intro{font:600 22px/1.3 Caveat,cursive;margin:0 0 10px}
-.note{position:sticky;top:64px;z-index:5;max-width:500px;margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s}
+.about{max-width:560px;margin:16px auto 0;font:600 22px/1.3 Caveat,cursive;color:var(--ink)}
+.song{max-width:520px;margin:18px auto 0;padding:0 14px}.song small{display:block;text-align:center;font:500 18px Caveat,cursive;color:var(--mute);margin-bottom:6px}.song iframe{border:0;border-radius:12px;width:100%}
+.cv.tall{height:340px}
+.note.away{transform:translateY(-170%) rotate(-1deg)}
+.note{position:sticky;top:64px;z-index:5;max-width:500px;margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s,transform .35s}
 .note small{font:500 17px Caveat,cursive;color:var(--mute);margin-top:4px}
 .note.f{opacity:0}
 .book{max-width:820px;margin:0 auto;padding:12px 14px calc(70px + env(safe-area-inset-bottom,0));display:flex;flex-direction:column;gap:40px}
@@ -73,14 +77,16 @@ h2{font:600 clamp(25px,5vw,34px)/1.15 Fraunces,Georgia,serif;margin:8px 0 2px}
 </style>
 </head>
 <body>
-<header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p></header>
+<header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
+<div class="song" id="song"></div>
 <div class="cd" id="cd"></div>
 <div class="note" id="note"></div>
 <button id="ob">Open our book</button>
 <main class="book" id="book"></main>
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="data.js?v=4"></script>
+<script src="data.js?v=5"></script>
+<script src="tracks.js?v=1"></script>
 <script>
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
@@ -106,94 +112,132 @@ const lineOpt={scales:{x:{ticks:{maxTicksLimit:8,autoSkip:true}}},interaction:{m
 const yr=m=>m.slice(0,4);
 const daily=Object.entries(D.daily);
 
+const mt=m=>D.monthly[m].khushi+D.monthly[m].harshil;
+const L2=(labs,a,b,o={})=>({labels:labs,datasets:[{label:'Khushi',data:a,borderColor:K,backgroundColor:K,tension:.3,pointRadius:0,borderWidth:3,spanGaps:true,...o},{label:'Harshil',data:b,borderColor:H,backgroundColor:H,tension:.3,pointRadius:0,borderWidth:2,spanGaps:true,...o}]});
+const B2=(labs,a,b)=>({labels:labs,datasets:[{label:'Khushi',data:a,backgroundColor:K},{label:'Harshil',data:b,backgroundColor:H}]});
+const fmtR=v=>v<2?Math.round(v*60)+' sec':v.toFixed(1)+' min';
+const nof=o=>({plugins:{legend:{display:false}},...o});
 const PAGES=[
-['2026-10-04','Day one','The very first messages, 27 June 2023',(r)=>{
- r.append(E(`<div class="big">${n(days(START,istToday())+1)} days</div>`));cap(r,'since 27 June 2023, 12:53 pm, when we started talking. This is how it began:');
- D.day1.slice(0,10).forEach(m=>r.append(E(`<div class="bub ${m.who}"><i>${m.who=='khushi'?'Khushi':'Harshil'}</i>${m.t}</div>`)))}],
-['2026-10-05','Every single day','Messages, days and a streak',(r)=>{
- const m=D.meta,sd=m.streak_start,ed=new Date(Date.parse(sd)+(m.streak-1)*864e5).toISOString().slice(0,10);
- r.append(E(`<div class="row">${stat(n(m.total),'messages',-2)}${stat(n(m.active_days)+' / '+n(m.span_days),'days we talked',2)}${stat(m.streak+' days','longest streak in a row',-1)}</div>`));
+['','Day one','27 June 2023, 12:53 pm',(r)=>{
+ r.append(E(`<div class="big">${n(days(START,istToday())+1)} days</div>`));cap(r,'since we started talking. This is how it began:');
+ D.day1.slice(0,10).forEach(m=>r.append(E(`<div class="bub ${m.who}"><i>${m.who=='khushi'?'Khushi':'Harshil'}</i>${m.t}</div>`)));
+ const f=Object.entries(D.daily).slice(0,14);chart(r,{type:'bar',data:{labels:f.map(x=>dl(x[0]).slice(0,-5)),datasets:[{data:f.map(x=>x[1]),backgroundColor:K}]},options:nof({scales:{x:{ticks:{maxTicksLimit:7}}}})});
+ cap(r,`Our first 14 days: ${n(f.reduce((s,x)=>s+x[1],0))} messages. We never really stopped.`)}],
+['','Every single day','Messages, days and streaks',(r)=>{
+ const m=D.meta;r.append(E(`<div class="row">${stat(n(m.total),'messages',-2)}${stat(n(m.active_days)+' / '+n(m.span_days),'days we talked',2)}${stat(m.streak+' days','longest streak in a row',-1)}</div>`));
  chart(r,{type:'doughnut',data:{labels:['Khushi','Harshil'],datasets:[{data:[m.by.khushi,m.by.harshil],backgroundColor:[K,H]}]}});
- cap(r,`Khushi ${n(m.by.khushi)}, Harshil ${n(m.by.harshil)}. Almost perfectly even. The streak ran ${dl(sd)} to ${dl(ed)}.`)}],
-['2026-10-06','Our months','Messages per month, who sent them',(r)=>{
- chart(r,{type:'bar',data:{labels:months.map(ml),datasets:[{label:'Khushi',data:months.map(m=>D.monthly[m].khushi),backgroundColor:K},{label:'Harshil',data:months.map(m=>D.monthly[m].harshil),backgroundColor:H}]},options:{scales:{x:{stacked:true,ticks:{maxTicksLimit:10}},y:{stacked:true}}}});
- const t=months.map(m=>[m,D.monthly[m].khushi+D.monthly[m].harshil]).filter(x=>x[0]<'2026-10').sort((a,b)=>b[1]-a[1])[0];
- cap(r,`Our loudest month: ${ml(t[0])}, ${n(t[1])} messages.`)}],
-['2026-10-07','When we talk','Hour by hour, day by day',(r)=>{
+ cap(r,`Khushi ${n(m.by.khushi)}, Harshil ${n(m.by.harshil)}. Almost perfectly even.`);
+ chart(r,{type:'bar',data:{labels:D.streaks.map(s=>'from '+dl(s.from)),datasets:[{data:D.streaks.map(s=>s.n),backgroundColor:['#c9566f','#d58a9b','#d58a9b','#e4b3bf','#e4b3bf']}]},options:nof({indexAxis:'y'})});
+ cap(r,`Our five longest runs of talking every single day. The best one: ${D.streaks[0].n} days.`)}],
+['','Our months','How the chat grew',(r)=>{
+ chart(r,{type:'bar',data:B2(months.map(ml),months.map(m=>D.monthly[m].khushi),months.map(m=>D.monthly[m].harshil)),options:{scales:{x:{stacked:true,ticks:{maxTicksLimit:10}},y:{stacked:true}}}});
+ const t=months.filter(m=>m<'2026-10').sort((a,b)=>mt(b)-mt(a))[0];cap(r,`Our loudest month: ${ml(t)}, ${n(mt(t))} messages.`);
+ let s=0;chart(r,{type:'line',data:{labels:months.map(ml),datasets:[{label:'Total messages so far',data:months.map(m=>s+=mt(m)),borderColor:K,backgroundColor:'#c9566f2e',fill:true,pointRadius:0}]},options:nof({scales:{x:{ticks:{maxTicksLimit:8}}}})});
+ cap(r,'Every message we ever sent, added up. It only goes one way.')}],
+['','When we talk','Hour by hour, day by day',(r)=>{
  const box=E('<div></div>'),tg=E('<div class="tog"><button class="on">Khushi</button><button>Harshil</button></div>'),g=E('<div class="heat"></div>');
  r.append(tg,box);box.append(g);const dn=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
  const draw=w=>{g.innerHTML='';const h=D.heat[w],mx=Math.max(...h.flat());g.append(E('<div class="l"></div>'));for(let i=0;i<24;i++)g.append(E(`<div class="l" style="aspect-ratio:auto">${i%6?'':i}</div>`));
   h.forEach((row,d)=>{g.append(E(`<div class="l">${dn[d]}</div>`));row.forEach((v,i)=>g.append(E(`<div title="${v}" style="opacity:${.06+.94*v/mx};background:${w=='khushi'?K:H}"></div>`)))})};
  tg.onclick=e=>{if(e.target.tagName!='BUTTON')return;[...tg.children].forEach(b=>b.classList.toggle('on',b==e.target));draw(e.target.textContent.toLowerCase())};draw('khushi');
- cap(r,'Darker means more messages. Tap a name to switch.')}],
-['2026-10-08','Late nights','Messages sent between 12 am and 5 am',(r)=>{
- chart(r,{type:'bar',data:{labels:['Khushi','Harshil'],datasets:[{data:[D.night.khushi,D.night.harshil],backgroundColor:[K,H]}]},options:{plugins:{legend:{display:false}}}});
- cap(r,`${n(D.night.khushi+D.night.harshil)} messages while the world slept. Khushi ${n(D.night.khushi)}, Harshil ${n(D.night.harshil)}.`)}],
-['2026-10-09','Calls','Every call with a recorded time',(r)=>{
- const c=D.calls;r.append(E(`<div class="row">${stat(n(c.n),'calls',-2)}${stat(n(c.hours)+' h','talked',2)}${stat(c.longest_min+' min','longest call, '+dl(c.longest_date),-1)}</div>`));
- chart(r,{type:'bar',data:{labels:Object.keys(c.monthly).map(ml),datasets:[{label:'Hours on call',data:Object.values(c.monthly).map(v=>v.h),backgroundColor:K}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:10}}}}});
- cap(r,`${c.video} of them were video calls.`)}],
-['2026-10-10','Good mornings, good nights','How we open and close the day',(r)=>{
- chart(r,{type:'bar',data:{labels:['Good morning','Good night'],datasets:[{label:'Khushi',data:[kwT('gm','khushi'),kwT('gn','khushi')],backgroundColor:K},{label:'Harshil',data:[kwT('gm','harshil'),kwT('gn','harshil')],backgroundColor:H}]}});
- cap(r,'Counted as messages containing "good morning/gm" or "good night/gn".')}],
-['2026-10-11','Who says hi first','The first message of each day',(r)=>{
+ cap(r,'Darker means more messages. Tap a name to switch.');
+ const wd=w=>D.heat[w].map(x=>x.reduce((a,b)=>a+b,0));chart(r,{type:'bar',data:B2(dn,wd('khushi'),wd('harshil'))});
+ const tot=wd('khushi').map((v,i)=>v+wd('harshil')[i]),bi=tot.indexOf(Math.max(...tot));cap(r,`${dn[bi]} is our busiest day of the week.`)}],
+['','Late nights','Messages between 12 am and 5 am',(r)=>{
+ chart(r,{type:'bar',data:{labels:['Khushi','Harshil'],datasets:[{data:[D.night.khushi,D.night.harshil],backgroundColor:[K,H]}]},options:nof()});
+ cap(r,`${n(D.night.khushi+D.night.harshil)} messages while the world slept. Khushi ${n(D.night.khushi)}, Harshil ${n(D.night.harshil)}.`);
+ chart(r,{type:'line',data:L2(months.map(ml),months.map(m=>D.night_m.khushi[m]||0),months.map(m=>D.night_m.harshil[m]||0)),options:lineOpt});
+ cap(r,'Month by month. The nights we stayed up for each other.')}],
+['','Calls','Every call with a recorded time',(r)=>{
+ const c=D.calls,vk=Object.keys(c.vv);r.append(E(`<div class="row">${stat(n(c.n),'calls',-2)}${stat(n(c.hours)+' h','talked',2)}${stat(c.longest_min+' min','longest call, '+dl(c.longest_date),-1)}</div>`));
+ chart(r,{type:'bar',data:{labels:vk.map(ml),datasets:[{label:'Video',data:vk.map(k=>c.vv[k].Video),backgroundColor:K},{label:'Voice',data:vk.map(k=>c.vv[k].Voice),backgroundColor:'#a79bd1'}]},options:{scales:{x:{stacked:true,ticks:{maxTicksLimit:10}},y:{stacked:true,title:{display:true,text:'hours'}}}}});
+ cap(r,`${n(c.video)} video calls. ${(c.hours/24).toFixed(1)} full days of just talking.`);
+ chart(r,{type:'bar',data:{labels:['under 10 min','10 to 30','30 to 60','1 to 2 hours','over 2 hours'],datasets:[{data:c.buckets,backgroundColor:K}]},options:nof()});
+ cap(r,`${n(c.buckets[3]+c.buckets[4])} of our calls went past an hour.`)}],
+['','Good mornings, good nights','How we open and close the day',(r)=>{
+ chart(r,{type:'bar',data:B2(['Good morning','Good night'],[kwT('gm','khushi'),kwT('gn','khushi')],[kwT('gm','harshil'),kwT('gn','harshil')])});
+ cap(r,'Messages containing "good morning / gm" or "good night / gn".');
+ chart(r,{type:'line',data:L2(months.map(ml),series('gm','khushi'),series('gm','harshil')),options:lineOpt});cap(r,'Good mornings per month.')}],
+['','Who says hi first','The first message of each day',(r)=>{
  const f=D.first_texter;chart(r,{type:'doughnut',data:{labels:['Khushi','Harshil'],datasets:[{data:[f.khushi,f.harshil],backgroundColor:[K,H]}]}});
- cap(r,`Khushi opened the day on ${n(f.khushi)} days. Harshil on ${n(f.harshil)}. Thank you for always starting it.`)}],
-['2026-10-12','How she looks after me','Little care words, counted',(r)=>{
- const items=[['khana','Khana / khaya'],['sojao','So ja'],['reach','Reach'],['dawai','Dawai / medicine'],['paani','Paani / water'],['tc','Take care']];
- chart(r,{type:'bar',data:{labels:items.map(i=>i[1]),datasets:[{label:'Khushi',data:items.map(i=>kwT(i[0],'khushi')),backgroundColor:K},{label:'Harshil',data:items.map(i=>kwT(i[0],'harshil')),backgroundColor:H}]},options:{indexAxis:'y'}},'');
- cap(r,'Messages that contain those words. Khushi asked "khana khaya?" more often than anyone.');r.append(E('<p class="fine">Search words are listed in data.js under "rx".</p>'))}],
-['2026-10-13','I love you, I miss you','Month by month',(r)=>{
- chart(r,{type:'line',data:{labels:months.map(ml),datasets:two('love')},options:lineOpt});
- cap(r,`"Love you" in ${n(kwT('love','khushi'))} of her messages.`);
- chart(r,{type:'line',data:{labels:months.map(ml),datasets:two('miss')},options:lineOpt});
- cap(r,`"Miss you" or "yaad" in ${n(kwT('miss','khushi'))} of hers.`)}],
-['2026-10-14','Her emojis','What Khushi says without words',(r)=>{
- const skip='♀♂🏻🏼🏽🏾🏿';const f=(a)=>a.filter(e=>!skip.includes(e[0])).slice(0,7);
- r.append(E(`<div class="chips">${f(D.emoji.khushi).map(e=>`<span>${e[0]} ${n(e[1])}</span>`).join('')}</div>`));
- cap(r,'Hers.');r.append(E(`<div class="chips">${f(D.emoji.harshil).map(e=>`<span>${e[0]} ${n(e[1])}</span>`).join('')}</div>`));cap(r,'Mine.')}],
-['2026-10-15','Sorry and gussa','The rough patches, honestly',(r)=>{
- const s=(k)=>months.map(m=>(D.kw[k].khushi.monthly[m]||0)+(D.kw[k].harshil.monthly[m]||0));
+ cap(r,`Khushi opened the day on ${n(f.khushi)} days. Harshil on ${n(f.harshil)}. Thank you for starting so many of them.`);
+ const fm=Object.keys(D.first_m);chart(r,{type:'line',data:{labels:fm.map(ml),datasets:[{label:'Days Khushi texted first (%)',data:fm.map(m=>Math.round(100*D.first_m[m].khushi/(D.first_m[m].khushi+D.first_m[m].harshil))),borderColor:K,backgroundColor:'#c9566f2e',fill:true,pointRadius:0,tension:.3}]},options:nof({scales:{y:{min:0,max:100},x:{ticks:{maxTicksLimit:8}}}})});
+ cap(r,'Share of days in each month that Khushi sent the first message.')}],
+['','How she looks after me','Little care words, counted',(r)=>{
+ const it=[['khana','Khana / khaya'],['sojao','So ja'],['reach','Reach'],['dawai','Dawai / medicine'],['paani','Paani / water'],['tc','Take care']];
+ chart(r,{type:'bar',data:B2(it.map(i=>i[1]),it.map(i=>kwT(i[0],'khushi')),it.map(i=>kwT(i[0],'harshil'))),options:{indexAxis:'y'}});
+ cap(r,'Messages that contain those words. Khushi leads on khana (595 to 436) and so ja (373 to 196). I lead on reach (88 to 41) and paani (70 to 33).');
+ chart(r,{type:'line',data:L2(months.map(ml),series('khana','khushi'),series('khana','harshil')),options:lineOpt});cap(r,'"Khana khaya?" month by month.')}],
+['','I love you, I miss you','Month by month',(r)=>{
+ chart(r,{type:'line',data:L2(months.map(ml),series('love','khushi'),series('love','harshil')),options:lineOpt});
+ cap(r,`"I love you" in ${n(kwT('love','khushi'))} of her messages and ${n(kwT('love','harshil'))} of mine.`);
+ chart(r,{type:'line',data:L2(months.map(ml),series('miss','khushi'),series('miss','harshil')),options:lineOpt});
+ cap(r,`"Miss you" in ${n(kwT('miss','khushi'))} of hers and ${n(kwT('miss','harshil'))} of mine.`)}],
+['','Hearts and emojis','What we say without words',(r)=>{
+ const skip='♀♂🏻🏼🏽🏾🏿',f=a=>a.filter(e=>!skip.includes(e[0])).slice(0,7);
+ r.append(E(`<div class="chips">${f(D.emoji.khushi).map(e=>`<span>${e[0]} ${n(e[1])}</span>`).join('')}</div>`));cap(r,'Hers.');
+ r.append(E(`<div class="chips">${f(D.emoji.harshil).map(e=>`<span>${e[0]} ${n(e[1])}</span>`).join('')}</div>`));cap(r,'Mine.');
+ chart(r,{type:'line',data:L2(months.map(ml),series('heart','khushi'),series('heart','harshil')),options:lineOpt});
+ cap(r,`Heart emojis sent: Khushi ${n(kwT('heart','khushi'))}, Harshil ${n(kwT('heart','harshil'))}.`)}],
+['','Sorry and gussa','The rough patches, honestly',(r)=>{
+ const s=k=>months.map(m=>(D.kw[k].khushi.monthly[m]||0)+(D.kw[k].harshil.monthly[m]||0));
  chart(r,{type:'bar',data:{labels:months.map(ml),datasets:[{label:'sorry / maaf',data:s('sorry'),backgroundColor:K},{label:'gussa / naraz',data:s('gussa'),backgroundColor:'#d9a441'}]},options:{scales:{x:{stacked:true,ticks:{maxTicksLimit:10}},y:{stacked:true}}}});
- cap(r,`Sorry: Khushi ${kwT('sorry','khushi')}, Harshil ${kwT('sorry','harshil')}. Gussa/naraz: Khushi ${kwT('gussa','khushi')}, Harshil ${kwT('gussa','harshil')}. And still we kept coming back.`)}],
-['2026-10-16','The quiet days','Days with no messages at all',(r)=>{
- const by={};D.silent_days.forEach(d=>by[yr(d)]=(by[yr(d)]||0)+1);
- chart(r,{type:'bar',data:{labels:Object.keys(by),datasets:[{data:Object.values(by),backgroundColor:'#a79bd1'}]},options:{plugins:{legend:{display:false}}}});
- cap(r,`${D.silent_days.length} quiet days in ${n(D.meta.span_days)}. The other ${n(D.meta.active_days)} had us.`)}],
-['2026-10-17','Coming back, part one','The longest silences and who ended them',(r)=>comeback(r,0)],
-['2026-10-18','Coming back, part two','And the ones after',(r)=>comeback(r,1)],
-['2026-10-19','Dates that matter','Pinned on the map',(r)=>{
- const dd=d=>D.daily[d]||0;
- r.append(E(`<div class="row">${stat(dl(START),'first "Hey"',-2)}${stat(dl(MILESTONES.anniv),'our anniversary, '+n(dd(MILESTONES.anniv))+' messages that day',2)}</div>`));
- r.append(E(`<div class="row" style="margin-top:12px">${MILESTONES.aug1.map(d=>stat(dl(d),n(dd(d))+' messages',-1)).join('')}${stat('Summer 2024','our first trip together'+(MILESTONES.tripDate?', '+n(dd(MILESTONES.tripDate))+' messages on day one':''),1)}</div>`));
- chart(r,{type:'line',data:{labels:months.map(ml),datasets:[{data:months.map(m=>D.monthly[m].khushi+D.monthly[m].harshil),borderColor:K,backgroundColor:'#c9566f2e',fill:true,tension:.3,pointRadius:0}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:8}}}}})}],
-['2026-10-20','Every day, in color','One square per day since 27 June 2023',(r)=>{
+ cap(r,'Every month together, the sorrys and the gussa.');
+ chart(r,{type:'bar',data:B2(['Sorry / maaf','Gussa / naraz'],[kwT('sorry','khushi'),kwT('gussa','khushi')],[kwT('sorry','harshil'),kwT('gussa','harshil')])});
+ cap(r,'And still we kept coming back.')}],
+['','The quiet days','Days with no messages at all',(r)=>{
+ const by={},bm={};D.silent_days.forEach(d=>{by[yr(d)]=(by[yr(d)]||0)+1;bm[d.slice(0,7)]=(bm[d.slice(0,7)]||0)+1});
+ chart(r,{type:'bar',data:{labels:Object.keys(by),datasets:[{data:Object.values(by),backgroundColor:'#a79bd1'}]},options:nof()});
+ cap(r,`${D.silent_days.length} quiet days in ${n(D.meta.span_days)}. The other ${n(D.meta.active_days)} had us.`);
+ chart(r,{type:'bar',data:{labels:months.map(ml),datasets:[{data:months.map(m=>bm[m]||0),backgroundColor:'#a79bd1'}]},options:nof({scales:{x:{ticks:{maxTicksLimit:10}}}})});cap(r,'Quiet days in each month.')}],
+['','Coming back, part one','The longest silences and who ended them',(r)=>comeback(r,0)],
+['','Coming back, part two','And the ones after',(r)=>comeback(r,1)],
+['','Dates that matter','Pinned on the map',(r)=>{
+ const dd=d=>D.daily[d]||0,avg=Math.round(D.meta.total/D.meta.active_days);
+ const pts=[[dl(START),dd(START)],['18 Nov 2023',dd(MILESTONES.anniv)],...MILESTONES.aug1.map(d=>[dl(d),dd(d)]),['An average day',avg]];
+ r.append(E(`<div class="row">${stat(dl(START),'first "Hey"',-2)}${stat(dl(MILESTONES.anniv),'our anniversary',2)}${stat('1 August','a date only we know',-1)}${stat('Summer 2024','our first trip together',1)}</div>`));
+ chart(r,{type:'bar',data:{labels:pts.map(p=>p[0]),datasets:[{data:pts.map(p=>p[1]),backgroundColor:pts.map((p,i)=>i==pts.length-1?'#bbb':K)}]},options:nof()});
+ cap(r,'Messages on our days, against an average day.')}],
+['','Every day, in color','One square per day since 27 June 2023',(r)=>{
  const w=E('<div class="cal"><div class="g"></div></div>'),g=w.firstChild,mx=Math.max(...Object.values(D.daily));
  const s=new Date(START+'T00:00:00Z'),pad=(s.getUTCDay()+6)%7;for(let i=0;i<pad;i++)g.append(E('<i style="background:none"></i>'));
  for(let i=0;i<=D.meta.span_days;i++){const d=new Date(s.getTime()+i*864e5).toISOString().slice(0,10),v=D.daily[d]||0;g.append(E(`<i title="${dl(d)}: ${v}" style="${v?`background:${K};opacity:${.2+.8*v/mx}`:''}"></i>`))}
- r.append(w);setTimeout(()=>w.scrollLeft=9999,50);cap(r,'Swipe sideways. Pink means we talked, darker means a lot.')}],
-['2026-10-21','Our busiest days','Top ten, by messages',(r)=>{
+ r.append(w);setTimeout(()=>w.scrollLeft=9999,50);cap(r,'Swipe sideways. Pink means we talked, darker means a lot.');
+ const dm={};Object.keys(D.daily).forEach(d=>dm[d.slice(0,7)]=(dm[d.slice(0,7)]||0)+1);
+ chart(r,{type:'bar',data:{labels:months.map(ml),datasets:[{data:months.map(m=>dm[m]||0),backgroundColor:K}]},options:nof({scales:{x:{ticks:{maxTicksLimit:10}},y:{max:31}}})});cap(r,'Days we talked in each month, out of at most 31.')}],
+['','Busiest days, fastest replies','Top ten days, and how quickly we answer',(r)=>{
  const t=daily.filter(x=>x[0]<istToday()).sort((a,b)=>b[1]-a[1]).slice(0,10);
- chart(r,{type:'bar',data:{labels:t.map(x=>dl(x[0])),datasets:[{data:t.map(x=>x[1]),backgroundColor:K}]},options:{indexAxis:'y',plugins:{legend:{display:false}}}},'');
- cap(r,`On ${dl(t[0][0])} we sent ${n(t[0][1])} messages in one day.`)}],
-['2026-10-22','In your words','Things Khushi actually wrote',(r)=>{
+ chart(r,{type:'bar',data:{labels:t.map(x=>dl(x[0])),datasets:[{data:t.map(x=>x[1]),backgroundColor:K}]},options:nof({indexAxis:'y'})},'tall');
+ cap(r,`On ${dl(t[0][0])} we sent ${n(t[0][1])} messages in one day.`);
+ const rk=Object.keys(D.reply.khushi);chart(r,{type:'line',data:L2(rk.map(ml),rk.map(m=>D.reply.khushi[m]),rk.map(m=>D.reply.harshil[m]||null)),options:{...lineOpt,scales:{y:{title:{display:true,text:'median minutes to reply'}},x:{ticks:{maxTicksLimit:8}}}}});
+ cap(r,`Median reply time: Khushi ${fmtR(D.reply_all.khushi)}, Harshil ${fmtR(D.reply_all.harshil)}. Replies within two hours only.`)}],
+['','In your words','Things Khushi actually wrote',(r)=>{
  const w=E('<div class="wall"></div>');D.notes.slice(0,24).forEach((x,i)=>w.append(E(`<div style="--r:${(i%5-2)*1.3}deg">${x.t}<small>${dl(x.d)}</small></div>`)));r.append(w)}],
-['2026-10-23','Year by year','Messages in each year',(r)=>{
- const y={};months.forEach(m=>y[yr(m)]=(y[yr(m)]||0)+D.monthly[m].khushi+D.monthly[m].harshil);
- chart(r,{type:'bar',data:{labels:Object.keys(y).map(k=>k=='2023'?'2023 (from Jun)':k=='2026'?'2026 (to Oct 4)':k),datasets:[{data:Object.values(y),backgroundColor:['#e4b3bf','#d58a9b',K,'#9e3f56']}]},options:{plugins:{legend:{display:false}}}})}],
-['2026-10-24','Her clock','The hours Khushi texts most',(r)=>{
- const h=Array(24).fill(0);D.heat.khushi.forEach(row=>row.forEach((v,i)=>h[i]+=v));const p=h.indexOf(Math.max(...h));
- chart(r,{type:'line',data:{labels:h.map((_,i)=>i+':00'),datasets:[{data:h,borderColor:K,backgroundColor:'#c9566f2e',fill:true,tension:.4,pointRadius:0}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:8}}}}});
- cap(r,`Her busiest hour is ${p}:00 to ${p+1}:00.`)}],
-['2026-10-26','The whole thing','Numbers, one last time',(r)=>{
- const m=D.meta,c=D.calls;
- r.append(E(`<div class="row">${stat(n(m.span_days),'days',-2)}${stat(n(m.total),'messages',2)}${stat(n(c.n),'calls',-1)}${stat(n(c.hours)+' h','on call',1)}${stat(m.streak,'day streak',-2)}${stat(n(kwT('love','khushi')+kwT('love','harshil')),'love yous',2)}</div>`));
+['','Year by year','Messages in each year',(r)=>{
+ const y={},yd={};months.forEach(m=>y[yr(m)]=(y[yr(m)]||0)+mt(m));
+ Object.keys(y).forEach(k=>{const a=k=='2023'?START:k+'-01-01',b=k=='2026'?D.meta.last:k+'-12-31';yd[k]=days(a,b)+1});
+ const ks=Object.keys(y),lab=ks.map(k=>k=='2023'?'2023 (from Jun)':k=='2026'?'2026 (to Oct 4)':k);
+ chart(r,{type:'bar',data:{labels:lab,datasets:[{data:ks.map(k=>y[k]),backgroundColor:['#e4b3bf','#d58a9b',K,'#9e3f56']}]},options:nof()});
+ cap(r,'Total messages in each year.');
+ chart(r,{type:'bar',data:{labels:lab,datasets:[{data:ks.map(k=>Math.round(y[k]/yd[k])),backgroundColor:'#a79bd1'}]},options:nof()});
+ cap(r,`Messages per day, on average. ${Math.round(y[ks[ks.length-1]]/yd[ks[ks.length-1]])} a day this year.`)}],
+['','Her clock, my clock','Which hours each of us texts',(r)=>{
+ const h=w=>{const a=Array(24).fill(0);D.heat[w].forEach(row=>row.forEach((v,i)=>a[i]+=v));return a},hk=h('khushi'),hh=h('harshil'),p=hk.indexOf(Math.max(...hk));
+ chart(r,{type:'line',data:L2(hk.map((_,i)=>i+':00'),hk,hh,{fill:false}),options:{...lineOpt,scales:{x:{ticks:{maxTicksLimit:8}}}}});
+ cap(r,`Khushi's busiest hour is ${p}:00 to ${p+1}:00.`);
+ const bk=a=>[a.slice(0,5),a.slice(5,12),a.slice(12,17),a.slice(17)].map(x=>x.reduce((s,v)=>s+v,0));
+ chart(r,{type:'bar',data:B2(['12 to 5 am','5 am to 12','12 to 5 pm','5 pm to 12'],bk(hk),bk(hh))});cap(r,'The same hours, in four parts of the day.')}],
+['','The whole thing','Numbers, one last time',(r)=>{
+ const m=D.meta,c=D.calls,t=(k)=>kwT(k,'khushi')+kwT(k,'harshil');
+ r.append(E(`<div class="row">${stat(n(m.span_days),'days',-2)}${stat(n(m.total),'messages',2)}${stat(n(c.n),'calls',-1)}${stat(n(c.hours)+' h','on call',1)}${stat(m.streak,'day streak',-2)}${stat(n(t('love')),'love yous',2)}</div>`));
+ chart(r,{type:'bar',data:B2(['Love you','Miss you','Sorry','Hearts / 10'],[kwT('love','khushi'),kwT('miss','khushi'),kwT('sorry','khushi'),Math.round(kwT('heart','khushi')/10)],[kwT('love','harshil'),kwT('miss','harshil'),kwT('sorry','harshil'),Math.round(kwT('heart','harshil')/10)])});
  cap(r,'Tomorrow is your day. Come back at 12:00 am.')}],
-['2026-10-27','Happy birthday, Khushi','27 October',(r)=>{r.classList.add('bday');r.append(E(`<div class="big">🎂</div><div class="letter">${LETTER}</div>`))}]
+['','Happy birthday, Khushi','27 October',(r)=>{r.classList.add('bday');r.append(E(`<div class="big">🎂</div><div class="letter">${LETTER}</div>`))}]
 ];
 function comeback(r,part){
  const top=D.comebacks.slice(0,8).sort((a,b)=>a.back<b.back?-1:1),sl=top.slice(part*4,part*4+4);
  sl.forEach(c=>r.append(E(`<div class="gap"><b>${n(c.hours/24)} days quiet</b>, ${dl(c.from)} to ${dl(c.back)}<br>${c.who=='khushi'?'Khushi':'Harshil'} wrote first:<q>${c.text.replace(/</g,'&lt;')}${c.text.length>=90?'...':''}</q></div>`)));
+ if(part==0){chart(r,{type:'bar',data:{labels:top.map(c=>dl(c.back).slice(0,-5)),datasets:[{data:top.map(c=>c.hours/24),backgroundColor:'#a79bd1'}]},options:{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'days of silence'}}}}});cap(r,'The eight longest silences we had. Each one ended with a message.')}
  if(part==1){const w={khushi:0,harshil:0};D.comebacks.forEach(c=>w[c.who]++);
   chart(r,{type:'doughnut',data:{labels:['Khushi','Harshil'],datasets:[{data:[w.khushi,w.harshil],backgroundColor:[K,H]}]}});
   cap(r,`Across the ${D.comebacks.length} longest silences, Khushi broke ${w.khushi} and Harshil ${w.harshil}.`)}
@@ -240,6 +284,12 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
+/* ---------- song ---------- */
+(function(){const T=window.TRACKS||[],s=document.getElementById('song');
+ const f=(u,hh)=>`<iframe src="https://open.spotify.com/embed/${u}?utm_source=generator&theme=0" height="${hh}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify"></iframe>`;
+ s.innerHTML=`<small>A song from our playlist</small>`+(T.length>1?f('track/'+T[Math.floor(Math.random()*T.length)],152):f('playlist/0z0uFvtD38XcvprmToTZwF',232))})();
+/* hide the note while scrolling down, show it when scrolling up */
+let ly=0;addEventListener('scroll',()=>{const y=scrollY;document.getElementById('note').classList.toggle('away',y>ly&&y>140);ly=y},{passive:true});
 /* ---------- rotating note, every 15 s ---------- */
 const nb=document.getElementById('note');let ni=0;
 function notePool(){const t=istToday();

@@ -1,0 +1,20 @@
+name: Daily page email
+on:
+  schedule:
+    - cron: '30 18 * * *'   # 18:30 UTC = 12:00 am IST
+  workflow_dispatch:
+    inputs:
+      force_date:
+        description: 'Test: send the email for this date (YYYY-MM-DD)'
+        required: false
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send email
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          FORCE_DATE: ${{ github.event.inputs.force_date }}
+        run: python3 send_email.py

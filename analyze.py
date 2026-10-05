@@ -81,7 +81,20 @@ for k in('2023-11-18','2024-08-01','2023-08-01'):out.setdefault('mile',{})[k]=da
 # trip candidates
 tr=C.Counter(D(r[0]) for r in rows if re.search(r'trip|manali|goa|train|flight',r[2],re.I) and '2024-04'<=D(r[0])<='2024-09')
 out['trip_cands']=tr.most_common(8)
-out['firsts']=[{'who':'harshil','d':'2024-06-03','t':'I love youuu','tag':'the first I love you in our chat'},{'who':'khushi','d':'2024-06-16','t':'I love you too❤️','tag':'her first I love you'}]
+def first(who,rx,after=0):
+    for r in rows:
+        if r[1]==who and re.search(rx,r[2],re.I):return r
+F=[]
+def add(r,tag,u,who):F.append({'who':nm(who),'d':D(r[0]),'t':r[2].strip().replace('\n',' ')[:90],'tag':tag,'u':u})
+add(rows[1],'the very first message',"2026-10-05",H)
+add(rows[2],'her first words to me',"2026-10-05",K)
+add(first(H,r'looking cute'),'the first time I called you cute',"2026-10-06",H)
+add(first(H,r'date pe'),'the first time we said "date"',"2026-10-07",H)
+add(first(H,r'miss you'),'the first time I said miss you',"2026-10-08",H)
+add(first(K,r'miss you|miss u\b'),'her first miss you',"2026-10-09",K)
+add(first(H,r'^I love youuu$'),'the first I love you in our chat',"2026-10-10",H)
+add(first(K,r'\b(love|luv|lub)\s+(you|u|uu|youu|uuu)\b'),'her first I love you',"2026-10-11",K)
+out['firsts']=F
 s=json.dumps(out,ensure_ascii=False,separators=(',',':'));open('data.js','w').write('window.DATA='+s+';')
 print({k:out[k] for k in('meta','night','first_texter','mile','trip_cands')},out['calls']['n'],out['calls']['hours'],out['calls']['longest_min'],out['emoji'],out['kw']['love'].keys())
 for c in cb[:6]:print(c)

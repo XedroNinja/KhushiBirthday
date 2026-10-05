@@ -170,7 +170,7 @@ header h1:after{content:" ♡";color:#c9566f}
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
-<script src="tracks.js?v=6"></script>
+<script src="tracks.js?v=6"></script>\n<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <script>
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
@@ -368,23 +368,29 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
-/* opening the scrapbook also starts a randomly selected verified Spotify song */
+/* opening the scrapbook starts a randomized Spotify track through Spotify's Embed API */
 (function(){
- const T=window.TRACKS||[],enter=document.getElementById('enterLove');
+ const T=window.TRACKS||[], enter=document.getElementById('enterLove');
  let last=localStorage.getItem('lastLoveTrack'),pool=T.filter(id=>id!==last);
  if(!pool.length)pool=T;
  const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
  if(pick)localStorage.setItem('lastLoveTrack',pick);
- let musicFrame=null;
+ let controller=null,wantsPlay=false;
+ const host=document.createElement('div');host.id='spotifyBackgroundPlayer';host.style.cssText='position:fixed;left:10px;bottom:10px;width:300px;max-width:calc(100vw - 20px);z-index:7;opacity:0;pointer-events:none;transition:opacity .35s';
+ document.body.appendChild(host);
+ window.onSpotifyIframeApiReady=(IFrameAPI)=>{
+   if(!pick)return;
+   IFrameAPI.createController(host,{uri:'spotify:track:'+pick,width:'100%',height:80,theme:'dark'},c=>{
+     controller=c;
+     if(wantsPlay){try{controller.play()}catch(_){}}
+   });
+ };
  enter.addEventListener('click',()=>{
    document.getElementById('loveCover').classList.add('opened');
-   if(!pick)return;
-   musicFrame=document.createElement('iframe');
-   musicFrame.src='https://open.spotify.com/embed/track/'+pick+'?utm_source=generator&theme=0&autoplay=1&v='+Date.now();
-   musicFrame.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
-   musicFrame.style.cssText='position:fixed;width:1px;height:1px;opacity:.01;pointer-events:none;left:-10px;bottom:-10px;border:0';
-   musicFrame.title='Our randomly selected song';
-   document.body.appendChild(musicFrame);
+   wantsPlay=true;
+   host.style.opacity='.92';host.style.pointerEvents='auto';
+   if(controller){try{controller.play()}catch(_){}}
+   setTimeout(()=>{host.style.opacity='.18'},4500);
  },{once:true});
 })();
 
@@ -393,7 +399,20 @@ const memoryReveal=document.getElementById('memoryReveal');
 document.querySelectorAll('.memory-dot').forEach(btn=>btn.addEventListener('click',()=>{
  document.querySelectorAll('.memory-dot').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
  if(btn.dataset.memory==='start') memoryReveal.innerHTML='<b>27 June 2023</b>&nbsp; — where this scrapbook begins.';
- if(btn.dataset.memory==='words'){const q=(D.firsts&&D.firsts.length?D.firsts[0]:null);memoryReveal.innerHTML=q?('“'+q.t+'”<br><small>'+dl(q.d)+'</small>'):'Thousands of messages became this little book.';}
+ if(btn.dataset.memory==='words'){
+   const moments=[
+    {t:'The food question, right at the beginning',q:'“Cholley bhature rajma chawal burger pizza... sb hee pssnd hai jo pyar sei mille sb khau”',d:'29 Jun 2023',who:'Harshil'},
+    {t:'A day worth remembering',q:'“thank you bola tha for making my day”',d:'21 Jul 2023',who:'Harshil'},
+    {t:'When support mattered',q:'“You doing great by supporting me♥️👀”',d:'24 Dec 2023',who:'Harshil'},
+    {t:'A Khushi line worth keeping',q:'“I miss you too... I love to hear your voice... Aur Mai bhi aapko bhot pasand karti hu harshil Sharma”',d:'13 Dec 2023',who:'Khushi'},
+    {t:'Harshil said it',q:'“I love youuu”',d:'3 Jun 2024',who:'Harshil'},
+    {t:'And then Khushi said it back',q:'“I love you too❤️”',d:'16 Jun 2024',who:'Khushi'},
+    {t:'A tiny food memory that became us',q:'“Aaj maine vo momos vala dekha to mujhe teri yaad to maine momos khaye”',d:'12 Jun 2024',who:'Khushi'},
+    {t:'Even the difficult parts belong here',q:'“So if we are fighting it is because we want to stay with each other and make this work”',d:'25 Feb 2025',who:'Khushi'}
+   ];
+   let last=+memoryReveal.dataset.lastMoment||-1,pool=moments.map((_,i)=>i).filter(i=>i!==last),i=pool[Math.floor(Math.random()*pool.length)],m=moments[i];
+   memoryReveal.dataset.lastMoment=i;memoryReveal.innerHTML='<b>'+m.t+'</b><br>'+m.q+'<br><small>'+m.who+' · '+m.d+' · tap “our words” again for another</small>';
+ }
  if(btn.dataset.memory==='songs'){memoryReveal.innerHTML='Some songs just sound like <b>you</b>. Opening our playlist…';setTimeout(()=>{document.getElementById('soundtrackDrawer').classList.add('open');document.getElementById('soundtrackTab').querySelector('span:last-child').textContent='Close songs'},350);}
  if(btn.dataset.memory==='today') memoryReveal.innerHTML='From the first chat to <b>today</b> — still adding pages.';
 }));

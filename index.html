@@ -14,7 +14,9 @@ body{background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-ser
 header{text-align:center;padding:56px 16px 8px}
 header h1{font:600 clamp(32px,7vw,56px)/1.1 Fraunces,Georgia,serif;margin:0;letter-spacing:-.01em}
 header p{font:500 clamp(19px,4vw,24px) Caveat,cursive;color:var(--mute);margin:10px 0 0}
-.note{position:sticky;top:10px;z-index:5;max-width:500px;margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s}
+.cd{position:fixed;top:calc(8px + env(safe-area-inset-top,0));right:8px;z-index:9;background:#fffefbee;border:1px solid var(--line);border-radius:10px;padding:5px 11px;font:600 17px/1.2 Caveat,cursive;text-align:right;box-shadow:0 4px 12px #4a3f2a1a}.cd b{font:600 15px Nunito,sans-serif;font-variant-numeric:tabular-nums;color:var(--rose)}
+.intro{font:600 22px/1.3 Caveat,cursive;margin:0 0 10px}
+.note{position:sticky;top:64px;z-index:5;max-width:500px;margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s}
 .note small{font:500 17px Caveat,cursive;color:var(--mute);margin-top:4px}
 .note.f{opacity:0}
 .book{max-width:820px;margin:0 auto;padding:12px 14px calc(70px + env(safe-area-inset-bottom,0));display:flex;flex-direction:column;gap:40px}
@@ -60,6 +62,7 @@ h2{font:600 clamp(25px,5vw,34px)/1.15 Fraunces,Georgia,serif;margin:8px 0 2px}
 </head>
 <body>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p></header>
+<div class="cd" id="cd"></div>
 <div class="note" id="note"></div>
 <main class="book" id="book"></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -91,7 +94,8 @@ const daily=Object.entries(D.daily);
 
 const PAGES=[
 ['2026-10-04','Day one','The very first messages, 27 June 2023',(r)=>{
- r.append(E(`<div class="big">${n(days(START,istToday())+1)} days</div>`));cap(r,'since the first "Hey" ago. This is how it started:');
+ r.append(E(`<p class="intro">This is our chat from the first message, turned into a scrapbook with charts. A new page opens every day at 12:00 am IST until your birthday on 27 October. Everything in it comes from what we actually wrote.</p>`));
+ r.append(E(`<div class="big">${n(days(START,istToday())+1)} days</div>`));cap(r,'since 27 June 2023, 12:53 pm, when we started talking. This is how it began:');
  D.day1.slice(0,10).forEach(m=>r.append(E(`<div class="bub ${m.who}"><i>${m.who=='khushi'?'Khushi':'Harshil'}</i>${m.t}</div>`)))}],
 ['2026-10-05','Every single day','Messages, days and a streak',(r)=>{
  const m=D.meta,sd=m.streak_start,ed=new Date(Date.parse(sd)+(m.streak-1)*864e5).toISOString().slice(0,10);
@@ -189,9 +193,9 @@ function comeback(r,part){
 const book=document.getElementById('book'),done={};
 function render(){
  const t=istToday(),open=PAGES.filter(p=>p[0]<=t),next=PAGES.find(p=>p[0]>t);
- document.getElementById('hd').textContent=open.length+' of '+PAGES.length+' pages are open';
+ document.getElementById('hd').textContent='Page '+open.length+' of '+PAGES.length;
  book.innerHTML='';
- if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am</div>`));
+ if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am<br><b class="tick" data-t="${next[0]}"></b></div>`));
  open.map((p,i)=>[p,i]).reverse().forEach(([p,i])=>{
   const el=E(`<section class="page c${i%5+1}" id="p${i+1}" style="--tr:${(i%4-1.5)*2}deg">${i==open.length-1&&i>0?'<span class="new">new</span>':''}<span class="pn">page ${i+1}</span><h2>${p[1]}</h2><p class="sub">${p[2]}</p></section>`);
   book.append(el);
@@ -199,9 +203,19 @@ function render(){
   const io=new IntersectionObserver((e)=>{if(e[0].isIntersecting){io.disconnect();p[3](el)}},{rootMargin:'300px'});io.observe(el)});
 }
 render();setInterval(()=>{const a=document.querySelectorAll('.page').length;if(PAGES.filter(p=>p[0]<=istToday()).length!=a)render()},30000);
+/* ---------- countdowns ---------- */
+const ist=d=>Date.parse(d+'T00:00:00+05:30'),pad=v=>String(v).padStart(2,'0');
+const hms=ms=>{ms=Math.max(0,ms)/1e3|0;const d=ms/86400|0;return (d?d+'d ':'')+pad(ms%86400/3600|0)+':'+pad(ms%3600/60|0)+':'+pad(ms%60)};
+function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get('day');
+ document.querySelectorAll('.tick').forEach(e=>e.textContent=pv?'':'in '+hms(ist(e.dataset.t)-now));
+ const cd=document.getElementById('cd');if(pv){cd.style.display='none';return}
+ const nx=PAGES.find(p=>ist(p[0])>now),bd=ist('2026-10-27');let s='';
+ if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
+ s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
+tick();setInterval(tick,1000);
 /* ---------- rotating note, every 15 s ---------- */
-let ni=Math.floor(Math.random()*D.notes.length);const nb=document.getElementById('note');
-function showNote(){const x=D.notes[ni++%D.notes.length];nb.classList.add('f');setTimeout(()=>{nb.innerHTML=`${x.t}<small>Khushi, ${dl(x.d)}</small>`;nb.classList.remove('f')},500)}
+const NL=[...D.firsts,...D.notes];let ni=0;const nb=document.getElementById('note');
+function showNote(){const x=NL[ni++%NL.length];nb.classList.add('f');setTimeout(()=>{nb.innerHTML=`${x.t}<small>${x.who=='harshil'?'Harshil':'Khushi'}, ${dl(x.d)}${x.tag?', '+x.tag:''}</small>`;nb.classList.remove('f')},500)}
 showNote();setInterval(showNote,15000);
 </script>
 </body>

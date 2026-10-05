@@ -81,6 +81,7 @@ for k in('2023-11-18','2024-08-01','2023-08-01'):out.setdefault('mile',{})[k]=da
 # trip candidates
 tr=C.Counter(D(r[0]) for r in rows if re.search(r'trip|manali|goa|train|flight',r[2],re.I) and '2024-04'<=D(r[0])<='2024-09')
 out['trip_cands']=tr.most_common(8)
+out['firsts']=[{'who':'harshil','d':'2024-06-03','t':'I love youuu','tag':'the first I love you in our chat'},{'who':'khushi','d':'2024-06-16','t':'I love you too❤️','tag':'her first I love you'}]
 s=json.dumps(out,ensure_ascii=False,separators=(',',':'));open('data.js','w').write('window.DATA='+s+';')
 print({k:out[k] for k in('meta','night','first_texter','mile','trip_cands')},out['calls']['n'],out['calls']['hours'],out['calls']['longest_min'],out['emoji'],out['kw']['love'].keys())
 for c in cb[:6]:print(c)

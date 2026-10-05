@@ -117,7 +117,7 @@ header h1:after{content:" ♡";color:#c9566f}
 .soundtrack-drawer.open{transform:translateX(0);opacity:1}.soundtrack-drawer h3{margin:0 0 5px;font:700 30px Caveat,cursive;color:#8d4054}.soundtrack-drawer p{font-size:13px;line-height:1.55;color:#725d63;margin:0 0 14px}.soundtrack-drawer iframe{width:100%;border:0;border-radius:16px}
 .soundtrack-link{display:block;text-align:center;margin-top:12px;padding:11px 14px;border-radius:999px;background:#191414;color:white;text-decoration:none;font-size:13px;font-weight:800}
 .love-divider{max-width:700px;margin:30px auto;text-align:center;color:#b26b7b;font:600 22px Caveat,cursive}.love-divider:before,.love-divider:after{content:"  ✿  ";opacity:.5}
-@media(max-width:520px){.soundtrack-tab{right:12px;bottom:14px}.soundtrack-drawer{right:10px;bottom:68px}}
+@media(max-width:520px){.soundtrack-tab{right:12px;bottom:104px}.soundtrack-drawer{right:10px;bottom:158px}}
 
 
 
@@ -126,7 +126,8 @@ header h1:after{content:" ♡";color:#c9566f}
 .soundtrack-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border:1px solid #ead7db;border-radius:50%;background:#fff;color:#8d4054;font:600 25px/1 Nunito,sans-serif;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 15px #5b34421a;z-index:2}
 .soundtrack-close:hover{transform:scale(1.05)}
 .soundtrack-drawer{padding-top:22px}
-\n/* little us card */
+
+/* little us card */
 .us-card{max-width:720px;margin:18px auto 30px;padding:28px 26px 24px;position:relative;text-align:center;background:linear-gradient(145deg,#fffaf7,#fff3f2);border:1px solid #ead7d7;border-radius:28px;box-shadow:0 18px 50px #7d4c5b16;overflow:hidden}
 .us-card:before{content:"♡";position:absolute;left:18px;top:5px;font:700 74px Caveat,cursive;color:#c9566f12;transform:rotate(-14deg)}
 .us-card .eyebrow{font:700 13px Nunito,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#a16c77}.us-card h3{margin:5px 0 10px;font:700 36px Caveat,cursive;color:#8d4054}.us-card p{margin:0 auto;max-width:570px;line-height:1.7;color:#6f565d}
@@ -167,7 +168,9 @@ header h1:after{content:" ♡";color:#c9566f}
   <small class="memory-hint">each one opens something different</small>
 </section>
 <div class="cd" id="cd"></div><div class="love-divider">every little thing somehow comes back to you</div>
-<div class="soundtrack-backdrop" id="soundtrackBackdrop" aria-hidden="true"></div>\n<aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">\n  <button class="soundtrack-close" id="soundtrackClose" type="button" aria-label="Close our soundtrack">×</button>
+<div class="soundtrack-backdrop" id="soundtrackBackdrop" aria-hidden="true"></div>
+<aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">
+  <button class="soundtrack-close" id="soundtrackClose" type="button" aria-label="Close our soundtrack">×</button>
   <h3>Our soundtrack ♡</h3>
   <p>These are the songs that make me think of you. Every time I listen to them, some little part of us comes back to me.</p>
   <iframe src="https://open.spotify.com/embed/playlist/0z0uFvtD38XcvprmToTZwF?utm_source=generator&theme=0" height="430" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Our Spotify playlist"></iframe>
@@ -181,7 +184,8 @@ header h1:after{content:" ♡";color:#c9566f}
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
-<script src="tracks.js?v=6"></script>\n<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+<script src="tracks.js?v=6"></script>
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <script>
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
@@ -410,16 +414,24 @@ addEventListener('pageshow',()=>setTimeout(resetScrapbookTop,0));
  },{once:true});
 })();
 
-/* keep the mobile Spotify embed compositor-active through long scrolling without restarting playback */
+/* keep Spotify's media iframe in the active mobile viewport/compositing layer during long scrolls */
+const keepMusicAlive=()=>{
+ const p=document.getElementById('spotifyBackgroundPlayer');
+ if(!p||!p.classList.contains('music-ready'))return;
+ p.style.visibility='visible';
+ p.style.transform='translate3d(-50%,0,0)';
+};
 let musicRaf=0;
-addEventListener('scroll',()=>{
+const queueMusicAnchor=()=>{
  if(musicRaf)return;
- musicRaf=requestAnimationFrame(()=>{
-   musicRaf=0;
-   const p=document.getElementById('spotifyBackgroundPlayer');
-   if(p&&p.classList.contains('music-ready'))p.style.transform='translate3d(-50%,0,0)';
- });
-},{passive:true});
+ musicRaf=requestAnimationFrame(()=>{musicRaf=0;keepMusicAlive()});
+};
+addEventListener('scroll',queueMusicAnchor,{passive:true});
+addEventListener('touchmove',queueMusicAnchor,{passive:true});
+if(window.visualViewport){
+ visualViewport.addEventListener('scroll',queueMusicAnchor,{passive:true});
+ visualViewport.addEventListener('resize',queueMusicAnchor,{passive:true});
+}
 
 /* interactive little universe — all factual text is drawn from existing scrapbook data */
 const memoryReveal=document.getElementById('memoryReveal');

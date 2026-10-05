@@ -98,9 +98,20 @@ header:after{content:"🌷";right:6%;top:48px;transform:rotate(13deg)}
 .about{max-width:700px!important}
 @media(max-width:520px){header:before,header:after{font-size:42px;opacity:.14}.love-vines span{font-size:25px}}
 
+
+/* love-cover + final romantic details */
+.love-cover{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 35%,#fff9f7 0,#f8e8e8 42%,#efdadd 100%);transition:opacity .7s ease,visibility .7s}
+.love-cover.opened{opacity:0;visibility:hidden;pointer-events:none}
+.love-card{position:relative;width:min(560px,92vw);padding:54px 34px 44px;text-align:center;background:#fffaf7eF;border:1px solid #e8cfd3;border-radius:30px;box-shadow:0 30px 80px #76434f2c}
+.love-card:before,.love-card:after{position:absolute;font-size:52px}.love-card:before{content:"🌷";left:-13px;top:-22px;transform:rotate(-18deg)}.love-card:after{content:"🌸";right:-10px;bottom:-18px;transform:rotate(15deg)}
+.love-card .tiny{font:600 15px Caveat,cursive;letter-spacing:2px;color:#9a6973;text-transform:uppercase}.love-card h2{margin:10px 0 14px;font:700 clamp(42px,9vw,72px) Caveat,cursive;line-height:.95;color:#8d4054}.love-card p{max-width:410px;margin:0 auto 28px;line-height:1.7;color:#694e55}.love-card button{border:0;border-radius:999px;padding:15px 27px;font-weight:700;background:#a94f65;color:white;box-shadow:0 10px 25px #a94f6540;cursor:pointer;font-size:16px}.love-card .petals{position:absolute;inset:0;pointer-events:none}.love-card .petals i{position:absolute;font-style:normal;opacity:.55}.love-card .petals i:nth-child(1){left:12%;top:17%}.love-card .petals i:nth-child(2){right:14%;top:23%}.love-card .petals i:nth-child(3){left:17%;bottom:16%}
+header h1:after{content:" ♡";color:#c9566f}
+.book:before{content:"❀  made from our little moments  ❀";display:block;text-align:center;margin:18px 0 30px;font:600 18px Caveat,cursive;color:#a56c78;letter-spacing:1px}
+.music-caption{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.music-caption small{margin:0!important}.music-caption span{font:600 13px Caveat,cursive;color:#a56c78}
+
 </style>
 </head>
-<body><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
+<body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
 <div class="song" id="song"></div>
 <div class="cd" id="cd"></div>
@@ -110,7 +121,7 @@ header:after{content:"🌷";right:6%;top:48px;transform:rotate(13deg)}
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
-<script src="tracks.js?v=1"></script>
+<script src="tracks.js?v=2"></script>
 <script>
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
@@ -309,15 +320,20 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
 /* ---------- song ---------- */
-(function(){const T=window.TRACKS||[],s=document.getElementById('song');
- const pick=T.length?T[Math.floor(Math.random()*T.length)]:null;
+(function(){
+ const T=window.TRACKS||[],s=document.getElementById('song');
+ let last=sessionStorage.getItem('lastLoveTrack'), pool=T.filter(x=>x!==last);
+ if(!pool.length) pool=T;
+ const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
+ if(pick) sessionStorage.setItem('lastLoveTrack',pick);
  const uri=pick?'track/'+pick:'playlist/0z0uFvtD38XcvprmToTZwF';
- const src='https://open.spotify.com/embed/'+uri+'?utm_source=generator&theme=0&autoplay=1';
- s.innerHTML=`<small>Our playlist · a different song each time</small><iframe src="${src}" height="${pick?152:232}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager" title="A song from our playlist"></iframe><button class="music-start" type="button" style="display:none">Play our song ♡</button>`;
- /* Browsers can block audible autoplay. First interaction retries by reloading the already-randomized embed. */
- const fr=s.querySelector('iframe'),retry=()=>{if(fr){const u=fr.src;fr.src='about:blank';requestAnimationFrame(()=>fr.src=u)}};
- ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,retry,{once:true,passive:true}));
+ const src='https://open.spotify.com/embed/'+uri+'?utm_source=generator&theme=0&autoplay=1&v='+Date.now();
+ s.innerHTML=`<div class="music-caption"><small>A song from our playlist</small><span>picked for this visit ♡</span></div><iframe src="${src}" height="${pick?152:232}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager" title="A song from our playlist"></iframe>`;
+ const fr=s.querySelector('iframe');
+ const startMusic=()=>{document.getElementById('loveCover').classList.add('opened');if(fr){const u=fr.src;fr.src='about:blank';requestAnimationFrame(()=>fr.src=u)}};
+ document.getElementById('enterLove').addEventListener('click',startMusic,{once:true});
 })();
+
 /* hide the note while scrolling down, show it when scrolling up */
 let ly=0;addEventListener('scroll',()=>{const y=scrollY;document.getElementById('note').classList.toggle('away',y>ly&&y>140);ly=y},{passive:true});
 /* ---------- rotating note, every 15 s ---------- */

@@ -337,19 +337,15 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
-/* ---------- song ---------- */
+/* ---------- shuffled YouTube Music soundtrack ---------- */
 (function(){
- const T=window.TRACKS||[],s=document.getElementById('song');
- let last=sessionStorage.getItem('lastLoveTrack'), pool=T.filter(x=>x!==last);
- if(!pool.length) pool=T;
- const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
- if(pick) localStorage.setItem('lastLoveTrack',pick);
- const uri=pick?'track/'+pick:'playlist/0z0uFvtD38XcvprmToTZwF';
- const src='https://open.spotify.com/embed/'+uri+'?utm_source=generator&theme=0&autoplay=1&v='+Date.now();
- s.innerHTML=`<div class="music-caption"><small>A song from our playlist</small><span>picked for this visit ♡</span></div><iframe src="${src}" height="${pick?152:232}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager" title="A song from our playlist"></iframe>`;
- const fr=s.querySelector('iframe');
- const startMusic=()=>{document.getElementById('loveCover').classList.add('opened');if(fr){const u=fr.src;fr.src='about:blank';requestAnimationFrame(()=>fr.src=u)}};
- document.getElementById('enterLove').addEventListener('click',startMusic,{once:true});
+ const s=document.getElementById('song'), playlist='PLXpx-nK69iZg';
+ s.innerHTML=`<div class="music-caption"><small>Our soundtrack</small><span>shuffled for this visit ♡</span></div><div id="ytLovePlayer"></div>`;
+ let player=null,ready=false,enterQueued=false;
+ window.onYouTubeIframeAPIReady=()=>{player=new YT.Player('ytLovePlayer',{height:'152',width:'100%',playerVars:{listType:'playlist',list:playlist,autoplay:0,controls:1,playsinline:1,rel:0},events:{onReady:()=>{ready=true;if(enterQueued)start()},onStateChange:e=>{if(e.data===YT.PlayerState.CUED||e.data===YT.PlayerState.PLAYING){try{player.setShuffle(true)}catch(_){}}}}})};
+ const api=document.createElement('script');api.src='https://www.youtube.com/iframe_api';document.head.appendChild(api);
+ function start(){document.getElementById('loveCover').classList.add('opened');if(!ready||!player){enterQueued=true;return}try{player.setShuffle(true);player.playVideo();}catch(_){}}
+ document.getElementById('enterLove').addEventListener('click',start,{once:true});
 })();
 
 /* our soundtrack drawer */

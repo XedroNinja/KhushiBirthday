@@ -119,11 +119,23 @@ header h1:after{content:" ♡";color:#c9566f}
 .love-divider{max-width:700px;margin:30px auto;text-align:center;color:#b26b7b;font:600 22px Caveat,cursive}.love-divider:before,.love-divider:after{content:"  ✿  ";opacity:.5}
 @media(max-width:520px){.soundtrack-tab{right:12px;bottom:14px}.soundtrack-drawer{right:10px;bottom:68px}}
 
+
+/* little us card */
+.us-card{max-width:720px;margin:18px auto 30px;padding:28px 26px 24px;position:relative;text-align:center;background:linear-gradient(145deg,#fffaf7,#fff3f2);border:1px solid #ead7d7;border-radius:28px;box-shadow:0 18px 50px #7d4c5b16;overflow:hidden}
+.us-card:before{content:"♡";position:absolute;left:18px;top:5px;font:700 74px Caveat,cursive;color:#c9566f12;transform:rotate(-14deg)}
+.us-card .eyebrow{font:700 13px Nunito,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#a16c77}.us-card h3{margin:5px 0 10px;font:700 36px Caveat,cursive;color:#8d4054}.us-card p{margin:0 auto;max-width:570px;line-height:1.7;color:#6f565d}
+.us-thread{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap}.us-thread span{padding:7px 11px;border:1px solid #ecd9dc;border-radius:999px;background:#fff;color:#8c626b;font:600 13px Caveat,cursive}.us-thread i{color:#c9566f;font-style:normal}
+
 </style>
 </head>
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
-<div class="song" id="song"></div>
+<section class="us-card" id="song">
+  <div class="eyebrow">from the first hello to right now</div>
+  <h3>Still choosing us ♡</h3>
+  <p>Not every page was easy. Not every day looked the same. But somehow, through all the little moments, the long conversations and everything in between, our story kept becoming ours.</p>
+  <div class="us-thread"><span>27 Jun 2023</span><i>♡</i><span>our chats</span><i>♡</i><span>our songs</span><i>♡</i><span>today</span></div>
+</section>
 <div class="cd" id="cd"></div><div class="love-divider">every little thing somehow comes back to you</div>
 <aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">
   <h3>Our soundtrack ♡</h3>
@@ -337,16 +349,8 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
-/* ---------- shuffled YouTube Music soundtrack ---------- */
-(function(){
- const s=document.getElementById('song'), playlist='PLXpx-nK69iZg';
- s.innerHTML=`<div class="music-caption"><small>Our soundtrack</small><span>shuffled for this visit ♡</span></div><div id="ytLovePlayer"></div>`;
- let player=null,ready=false,enterQueued=false;
- window.onYouTubeIframeAPIReady=()=>{player=new YT.Player('ytLovePlayer',{height:'152',width:'100%',playerVars:{listType:'playlist',list:playlist,autoplay:0,controls:1,playsinline:1,rel:0},events:{onReady:()=>{ready=true;if(enterQueued)start()},onStateChange:e=>{if(e.data===YT.PlayerState.CUED||e.data===YT.PlayerState.PLAYING){try{player.setShuffle(true)}catch(_){}}}}})};
- const api=document.createElement('script');api.src='https://www.youtube.com/iframe_api';document.head.appendChild(api);
- function start(){document.getElementById('loveCover').classList.add('opened');if(!ready||!player){enterQueued=true;return}try{player.setShuffle(true);player.playVideo();}catch(_){}}
- document.getElementById('enterLove').addEventListener('click',start,{once:true});
-})();
+/* opening the scrapbook is the one intentional first interaction */
+document.getElementById('enterLove').addEventListener('click',()=>document.getElementById('loveCover').classList.add('opened'),{once:true});
 
 /* our soundtrack drawer */
 const soundtrackTab=document.getElementById('soundtrackTab'),soundtrackDrawer=document.getElementById('soundtrackDrawer');

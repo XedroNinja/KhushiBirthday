@@ -1,9 +1,29 @@
-/* Verified Spotify track IDs from Khushi's playlist.
-   The site chooses randomly and avoids the previously played song. */
+/* Verified Spotify track IDs supplied for Khushi's scrapbook.
+   A visit chooses randomly and avoids the previously selected song. */
 window.TRACKS=[
   "6sn1jMPGH6bX46xm2hOSTE",
   "7iDAgeOdEZ9x9wDiB6SRHl",
   "0iAV4HUaAXBZ4U1EBNVM94",
   "4vZntW0SP87tLs5paQBvFJ",
-  "4KBdTRqDvcB7Z05GyvnsCt"
+  "4KBdTRqDvcB7Z05GyvnsCt",
+  "7iL0hL5A6eXz85UPgev0rb",
+  "4rEhvxve5avFn3iG9vZCer",
+  "5KKwID2NpiZmUR8uobmXGr",
+  "09EhdsAojMfVM65KIU6nCQ",
+  "0tW2gwaRzFQQrgr2UCO56G",
+  "1q82k8tuu1t6t8H8zHMqWs",
+  "0OYM3o87SqGEwXwAShWfkM",
+  "1p89rzGhwdvgJoO6JnkSMn",
+  "3pZmxshLNRT7wV8pnVvLch",
+  "0HUmKtBXiq6QlJF4D2W9dz",
+  "2wbi2WKUOacAcI5L6PU0EV",
+  "7xbRQfVgKHGyp5grJErFop",
+  "2RCghOjk8nX4AXTgVVaW42",
+  "1ZiReD9pPTttQWwSoYqdyH",
+  "4LtSTc3xANVhYeeN69nscM",
+  "2dPUug9YiNL4ypu8UF8SnD",
+  "74kCarkFBzXYXNkkYJIsG0",
+  "0PKEQjnGn0LmPjozJ3t4MF",
+  "1TkyDEdjiUuYhoMkxdZCiO",
+  "39es2uqzKE5p6dwL6OjAZh"
 ];

@@ -368,8 +368,25 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
-/* opening the scrapbook is the one intentional first interaction */
-document.getElementById('enterLove').addEventListener('click',()=>document.getElementById('loveCover').classList.add('opened'),{once:true});
+/* opening the scrapbook also starts a randomly selected verified Spotify song */
+(function(){
+ const T=window.TRACKS||[],enter=document.getElementById('enterLove');
+ let last=localStorage.getItem('lastLoveTrack'),pool=T.filter(id=>id!==last);
+ if(!pool.length)pool=T;
+ const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
+ if(pick)localStorage.setItem('lastLoveTrack',pick);
+ let musicFrame=null;
+ enter.addEventListener('click',()=>{
+   document.getElementById('loveCover').classList.add('opened');
+   if(!pick)return;
+   musicFrame=document.createElement('iframe');
+   musicFrame.src='https://open.spotify.com/embed/track/'+pick+'?utm_source=generator&theme=0&autoplay=1&v='+Date.now();
+   musicFrame.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+   musicFrame.style.cssText='position:fixed;width:1px;height:1px;opacity:.01;pointer-events:none;left:-10px;bottom:-10px;border:0';
+   musicFrame.title='Our randomly selected song';
+   document.body.appendChild(musicFrame);
+ },{once:true});
+})();
 
 /* interactive little universe — all factual text is drawn from existing scrapbook data */
 const memoryReveal=document.getElementById('memoryReveal');

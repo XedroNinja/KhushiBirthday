@@ -139,7 +139,7 @@ header h1:after{content:" ♡";color:#c9566f}
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
-<script src="tracks.js?v=2"></script>
+<script src="tracks.js?v=6"></script>
 <script>
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
@@ -343,7 +343,7 @@ tick();setInterval(tick,1000);
  let last=sessionStorage.getItem('lastLoveTrack'), pool=T.filter(x=>x!==last);
  if(!pool.length) pool=T;
  const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
- if(pick) sessionStorage.setItem('lastLoveTrack',pick);
+ if(pick) localStorage.setItem('lastLoveTrack',pick);
  const uri=pick?'track/'+pick:'playlist/0z0uFvtD38XcvprmToTZwF';
  const src='https://open.spotify.com/embed/'+uri+'?utm_source=generator&theme=0&autoplay=1&v='+Date.now();
  s.innerHTML=`<div class="music-caption"><small>A song from our playlist</small><span>picked for this visit ♡</span></div><iframe src="${src}" height="${pick?152:232}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager" title="A song from our playlist"></iframe>`;

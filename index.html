@@ -74,9 +74,33 @@ h2{font:600 clamp(25px,5vw,34px)/1.15 Fraunces,Georgia,serif;margin:8px 0 2px}
 .bkpage.r .page{animation:inR .35s}.bkpage.l .page{animation:inL .35s}
 @media(prefers-reduced-motion:reduce){.note{transition:none}}
 @media(max-width:520px){.page{padding:30px 14px 20px}.cv{height:240px}}
+
+/* final love-letter polish */
+body{background:
+ radial-gradient(circle at 8% 10%,#f8dbe355 0 120px,transparent 121px),
+ radial-gradient(circle at 92% 22%,#eadcf655 0 150px,transparent 151px),
+ linear-gradient(180deg,#fffaf8 0%,#faf6f1 55%,#fff9fb 100%);overflow-x:hidden}
+header{position:relative;isolation:isolate}
+header:before,header:after{position:absolute;font-size:clamp(46px,8vw,86px);opacity:.2;filter:saturate(.8);z-index:-1;pointer-events:none}
+header:before{content:"🌸";left:5%;top:18px;transform:rotate(-15deg)}
+header:after{content:"🌷";right:6%;top:48px;transform:rotate(13deg)}
+.love-vines{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.love-vines span{position:absolute;opacity:.16;font-size:34px;animation:floatFlower 9s ease-in-out infinite}
+.love-vines span:nth-child(1){left:2%;top:22%}.love-vines span:nth-child(2){right:3%;top:38%;animation-delay:-2s}
+.love-vines span:nth-child(3){left:4%;top:72%;animation-delay:-5s}.love-vines span:nth-child(4){right:4%;top:82%;animation-delay:-7s}
+@keyframes floatFlower{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-16px) rotate(7deg)}}
+.page{box-shadow:0 18px 50px #8f5b6b17,0 2px 7px #6e4c5512;border-color:#eadfdc}
+.page:before{content:"♡";position:absolute;right:18px;top:12px;font:700 25px Caveat,cursive;color:#c9566f55}
+#ob{box-shadow:0 10px 26px #c9566f24;transition:transform .2s,box-shadow .2s}
+#ob:hover{transform:translateY(-2px);box-shadow:0 14px 32px #c9566f35}
+.song{border-radius:20px!important;box-shadow:0 12px 34px #8d55671c!important;overflow:hidden}
+.song small:before{content:"♥ ";color:var(--rose)}
+.about{max-width:700px!important}
+@media(max-width:520px){header:before,header:after{font-size:42px;opacity:.14}.love-vines span{font-size:25px}}
+
 </style>
 </head>
-<body>
+<body><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
 <div class="song" id="song"></div>
 <div class="cd" id="cd"></div>
@@ -286,8 +310,14 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
 tick();setInterval(tick,1000);
 /* ---------- song ---------- */
 (function(){const T=window.TRACKS||[],s=document.getElementById('song');
- const f=(u,hh)=>`<iframe src="https://open.spotify.com/embed/${u}?utm_source=generator&theme=0" height="${hh}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify"></iframe>`;
- s.innerHTML=`<small>A song from our playlist</small>`+(T.length>1?f('track/'+T[Math.floor(Math.random()*T.length)],152):f('playlist/0z0uFvtD38XcvprmToTZwF',232))})();
+ const pick=T.length?T[Math.floor(Math.random()*T.length)]:null;
+ const uri=pick?'track/'+pick:'playlist/0z0uFvtD38XcvprmToTZwF';
+ const src='https://open.spotify.com/embed/'+uri+'?utm_source=generator&theme=0&autoplay=1';
+ s.innerHTML=`<small>Our playlist · a different song each time</small><iframe src="${src}" height="${pick?152:232}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager" title="A song from our playlist"></iframe><button class="music-start" type="button" style="display:none">Play our song ♡</button>`;
+ /* Browsers can block audible autoplay. First interaction retries by reloading the already-randomized embed. */
+ const fr=s.querySelector('iframe'),retry=()=>{if(fr){const u=fr.src;fr.src='about:blank';requestAnimationFrame(()=>fr.src=u)}};
+ ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,retry,{once:true,passive:true}));
+})();
 /* hide the note while scrolling down, show it when scrolling up */
 let ly=0;addEventListener('scroll',()=>{const y=scrollY;document.getElementById('note').classList.toggle('away',y>ly&&y>140);ly=y},{passive:true});
 /* ---------- rotating note, every 15 s ---------- */

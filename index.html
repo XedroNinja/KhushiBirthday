@@ -140,9 +140,9 @@ header h1:after{content:" ♡";color:#c9566f}
 
 
 /* mobile soundtrack: keep the real Spotify embed tappable so iOS/Android can start it */
-#spotifyBackgroundPlayer{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(360px,calc(100vw - 24px));z-index:12;transition:opacity .35s,transform .35s}
+#spotifyBackgroundPlayer{position:fixed;left:50%;bottom:14px;transform:translate3d(-50%,0,0);width:min(360px,calc(100vw - 24px));z-index:9999;transition:opacity .35s,transform .35s;will-change:transform;contain:layout paint;isolation:isolate}
 #spotifyBackgroundPlayer.music-ready{opacity:1!important;pointer-events:auto!important}
-@media(max-width:600px){#spotifyBackgroundPlayer{bottom:10px;width:calc(100vw - 20px)}#spotifyBackgroundPlayer iframe{max-height:80px}}
+@media(max-width:600px){#spotifyBackgroundPlayer{bottom:max(10px,env(safe-area-inset-bottom));width:calc(100vw - 20px)}#spotifyBackgroundPlayer iframe{display:block;width:100%!important;height:80px!important;max-height:80px}}
 </style>
 </head>
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
@@ -403,6 +403,17 @@ addEventListener('pageshow',()=>setTimeout(resetScrapbookTop,0));
    if(controller){try{controller.play()}catch(_){}}
  },{once:true});
 })();
+
+/* keep the mobile Spotify embed compositor-active through long scrolling without restarting playback */
+let musicRaf=0;
+addEventListener('scroll',()=>{
+ if(musicRaf)return;
+ musicRaf=requestAnimationFrame(()=>{
+   musicRaf=0;
+   const p=document.getElementById('spotifyBackgroundPlayer');
+   if(p&&p.classList.contains('music-ready'))p.style.transform='translate3d(-50%,0,0)';
+ });
+},{passive:true});
 
 /* interactive little universe — all factual text is drawn from existing scrapbook data */
 const memoryReveal=document.getElementById('memoryReveal');

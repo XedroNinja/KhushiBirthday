@@ -126,15 +126,34 @@ header h1:after{content:" ♡";color:#c9566f}
 .us-card .eyebrow{font:700 13px Nunito,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#a16c77}.us-card h3{margin:5px 0 10px;font:700 36px Caveat,cursive;color:#8d4054}.us-card p{margin:0 auto;max-width:570px;line-height:1.7;color:#6f565d}
 .us-thread{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap}.us-thread span{padding:7px 11px;border:1px solid #ecd9dc;border-radius:999px;background:#fff;color:#8c626b;font:600 13px Caveat,cursive}.us-thread i{color:#c9566f;font-style:normal}
 
+
+/* interactive memory constellation */
+.memory-play{max-width:760px;margin:18px auto 34px;padding:26px 24px;text-align:center;background:linear-gradient(145deg,#fffaf8,#fff1f2);border:1px solid #ead7db;border-radius:28px;box-shadow:0 18px 50px #7d4c5b16;position:relative;overflow:hidden}
+.memory-play h3{margin:3px 0 5px;font:700 35px Caveat,cursive;color:#8d4054}.memory-play>p{margin:0 auto 20px;max-width:570px;color:#715960;line-height:1.6;font-size:14px}
+.memory-orbit{position:relative;height:250px;max-width:610px;margin:auto;border-radius:24px;background:radial-gradient(circle at center,#fff 0,#fff8f6 48%,#f8e7e8 100%);border:1px dashed #e5c7cd;overflow:hidden}
+.memory-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:105px;height:105px;border-radius:50%;display:grid;place-items:center;background:#fff9f7;border:1px solid #e7cbd1;box-shadow:0 8px 28px #8d405422;font:700 25px Caveat,cursive;color:#8d4054;line-height:1.05}
+.memory-dot{position:absolute;border:0;border-radius:999px;background:#fff;color:#945b69;box-shadow:0 6px 18px #8d40541c;border:1px solid #ead4d8;cursor:pointer;padding:9px 12px;font:700 14px Caveat,cursive;transition:.2s}
+.memory-dot:hover,.memory-dot.active{transform:scale(1.07);background:#a94f65;color:#fff}.memory-dot:nth-of-type(1){left:7%;top:16%}.memory-dot:nth-of-type(2){right:8%;top:15%}.memory-dot:nth-of-type(3){left:8%;bottom:16%}.memory-dot:nth-of-type(4){right:8%;bottom:16%}
+.memory-reveal{min-height:54px;margin:18px auto 0;max-width:590px;padding:12px 15px;border-radius:17px;background:#fff;border:1px solid #eedde0;color:#6f555d;display:grid;place-items:center;line-height:1.5}.memory-reveal b{color:#9a5062}
+.memory-hint{display:block;margin-top:8px;font:600 13px Caveat,cursive;color:#a16c77}
+@media(max-width:520px){.memory-orbit{height:285px}.memory-center{width:90px;height:90px;font-size:22px}.memory-dot{font-size:13px;padding:8px 10px}.memory-dot:nth-of-type(1){left:4%;top:12%}.memory-dot:nth-of-type(2){right:4%;top:12%}.memory-dot:nth-of-type(3){left:4%;bottom:12%}.memory-dot:nth-of-type(4){right:4%;bottom:12%}}
+
 </style>
 </head>
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
-<section class="us-card" id="song">
-  <div class="eyebrow">from the first hello to right now</div>
-  <h3>Still choosing us ♡</h3>
-  <p>Not every page was easy. Not every day looked the same. But somehow, through all the little moments, the long conversations and everything in between, our story kept becoming ours.</p>
-  <div class="us-thread"><span>27 Jun 2023</span><i>♡</i><span>our chats</span><i>♡</i><span>our songs</span><i>♡</i><span>today</span></div>
+<section class="memory-play" id="song">
+  <h3>Tap around our little universe ♡</h3>
+  <p>Some things became part of us. Touch one and let this scrapbook take you back.</p>
+  <div class="memory-orbit">
+    <div class="memory-center">Harshil<br>♡<br>Khushi</div>
+    <button class="memory-dot" type="button" data-memory="start">the beginning</button>
+    <button class="memory-dot" type="button" data-memory="words">our words</button>
+    <button class="memory-dot" type="button" data-memory="songs">our songs</button>
+    <button class="memory-dot" type="button" data-memory="today">right now</button>
+  </div>
+  <div class="memory-reveal" id="memoryReveal">Pick a little piece of us ♡</div>
+  <small class="memory-hint">each one opens something different</small>
 </section>
 <div class="cd" id="cd"></div><div class="love-divider">every little thing somehow comes back to you</div>
 <aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">
@@ -351,6 +370,16 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
 tick();setInterval(tick,1000);
 /* opening the scrapbook is the one intentional first interaction */
 document.getElementById('enterLove').addEventListener('click',()=>document.getElementById('loveCover').classList.add('opened'),{once:true});
+
+/* interactive little universe — all factual text is drawn from existing scrapbook data */
+const memoryReveal=document.getElementById('memoryReveal');
+document.querySelectorAll('.memory-dot').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.memory-dot').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+ if(btn.dataset.memory==='start') memoryReveal.innerHTML='<b>27 June 2023</b>&nbsp; — where this scrapbook begins.';
+ if(btn.dataset.memory==='words'){const q=(D.firsts&&D.firsts.length?D.firsts[0]:null);memoryReveal.innerHTML=q?('“'+q.t+'”<br><small>'+dl(q.d)+'</small>'):'Thousands of messages became this little book.';}
+ if(btn.dataset.memory==='songs'){memoryReveal.innerHTML='Some songs just sound like <b>you</b>. Opening our playlist…';setTimeout(()=>{document.getElementById('soundtrackDrawer').classList.add('open');document.getElementById('soundtrackTab').querySelector('span:last-child').textContent='Close songs'},350);}
+ if(btn.dataset.memory==='today') memoryReveal.innerHTML='From the first chat to <b>today</b> — still adding pages.';
+}));
 
 /* our soundtrack drawer */
 const soundtrackTab=document.getElementById('soundtrackTab'),soundtrackDrawer=document.getElementById('soundtrackDrawer');

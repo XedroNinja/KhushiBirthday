@@ -120,7 +120,13 @@ header h1:after{content:" ♡";color:#c9566f}
 @media(max-width:520px){.soundtrack-tab{right:12px;bottom:14px}.soundtrack-drawer{right:10px;bottom:68px}}
 
 
-/* little us card */
+
+.soundtrack-backdrop{position:fixed;inset:0;z-index:7998;background:#2d17232e;backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s ease}
+.soundtrack-backdrop.open{opacity:1;pointer-events:auto}
+.soundtrack-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border:1px solid #ead7db;border-radius:50%;background:#fff;color:#8d4054;font:600 25px/1 Nunito,sans-serif;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 15px #5b34421a;z-index:2}
+.soundtrack-close:hover{transform:scale(1.05)}
+.soundtrack-drawer{padding-top:22px}
+\n/* little us card */
 .us-card{max-width:720px;margin:18px auto 30px;padding:28px 26px 24px;position:relative;text-align:center;background:linear-gradient(145deg,#fffaf7,#fff3f2);border:1px solid #ead7d7;border-radius:28px;box-shadow:0 18px 50px #7d4c5b16;overflow:hidden}
 .us-card:before{content:"♡";position:absolute;left:18px;top:5px;font:700 74px Caveat,cursive;color:#c9566f12;transform:rotate(-14deg)}
 .us-card .eyebrow{font:700 13px Nunito,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#a16c77}.us-card h3{margin:5px 0 10px;font:700 36px Caveat,cursive;color:#8d4054}.us-card p{margin:0 auto;max-width:570px;line-height:1.7;color:#6f565d}
@@ -161,7 +167,7 @@ header h1:after{content:" ♡";color:#c9566f}
   <small class="memory-hint">each one opens something different</small>
 </section>
 <div class="cd" id="cd"></div><div class="love-divider">every little thing somehow comes back to you</div>
-<aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">
+<div class="soundtrack-backdrop" id="soundtrackBackdrop" aria-hidden="true"></div>\n<aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">\n  <button class="soundtrack-close" id="soundtrackClose" type="button" aria-label="Close our soundtrack">×</button>
   <h3>Our soundtrack ♡</h3>
   <p>These are the songs that make me think of you. Every time I listen to them, some little part of us comes back to me.</p>
   <iframe src="https://open.spotify.com/embed/playlist/0z0uFvtD38XcvprmToTZwF?utm_source=generator&theme=0" height="430" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Our Spotify playlist"></iframe>
@@ -434,13 +440,21 @@ document.querySelectorAll('.memory-dot').forEach(btn=>btn.addEventListener('clic
    let last=+memoryReveal.dataset.lastMoment||-1,pool=moments.map((_,i)=>i).filter(i=>i!==last),i=pool[Math.floor(Math.random()*pool.length)],m=moments[i];
    memoryReveal.dataset.lastMoment=i;memoryReveal.innerHTML='<b>'+m.t+'</b><br>'+m.q+'<br><small>'+m.who+' · '+m.d+' · tap “our words” again for another</small>';
  }
- if(btn.dataset.memory==='songs'){memoryReveal.innerHTML='Some songs just sound like <b>you</b>. Opening our playlist…';setTimeout(()=>{document.getElementById('soundtrackDrawer').classList.add('open');document.getElementById('soundtrackTab').querySelector('span:last-child').textContent='Close songs'},350);}
+ if(btn.dataset.memory==='songs'){memoryReveal.innerHTML='Some songs just sound like <b>you</b>. Opening our playlist…';setTimeout(()=>{setSoundtrack(true)},350);}
  if(btn.dataset.memory==='today') memoryReveal.innerHTML='From the first chat to <b>today</b> — still adding pages.';
 }));
 
 /* our soundtrack drawer */
-const soundtrackTab=document.getElementById('soundtrackTab'),soundtrackDrawer=document.getElementById('soundtrackDrawer');
-soundtrackTab.addEventListener('click',()=>{const open=soundtrackDrawer.classList.toggle('open');soundtrackTab.querySelector('span:last-child').textContent=open?'Close songs':'Our songs';});
+const soundtrackTab=document.getElementById('soundtrackTab'),soundtrackDrawer=document.getElementById('soundtrackDrawer'),soundtrackBackdrop=document.getElementById('soundtrackBackdrop'),soundtrackClose=document.getElementById('soundtrackClose');
+function setSoundtrack(open){
+ soundtrackDrawer.classList.toggle('open',open);soundtrackBackdrop.classList.toggle('open',open);
+ soundtrackTab.querySelector('span:last-child').textContent=open?'Close songs':'Our songs';
+ soundtrackTab.setAttribute('aria-expanded',open?'true':'false');
+}
+soundtrackTab.addEventListener('click',e=>{e.stopPropagation();setSoundtrack(!soundtrackDrawer.classList.contains('open'))});
+soundtrackClose.addEventListener('click',()=>setSoundtrack(false));
+soundtrackBackdrop.addEventListener('click',()=>setSoundtrack(false));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&soundtrackDrawer.classList.contains('open'))setSoundtrack(false)});
 
 /* hide the note while scrolling down, show it when scrolling up */
 let ly=0;addEventListener('scroll',()=>{const y=scrollY;document.getElementById('note').classList.toggle('away',y>ly&&y>140);ly=y},{passive:true});

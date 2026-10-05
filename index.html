@@ -109,12 +109,30 @@ header h1:after{content:" ♡";color:#c9566f}
 .book:before{content:"❀  made from our little moments  ❀";display:block;text-align:center;margin:18px 0 30px;font:600 18px Caveat,cursive;color:#a56c78;letter-spacing:1px}
 .music-caption{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.music-caption small{margin:0!important}.music-caption span{font:600 13px Caveat,cursive;color:#a56c78}
 
+
+/* our soundtrack */
+.soundtrack-tab{position:fixed;right:18px;bottom:22px;z-index:8000;border:0;border-radius:999px;padding:12px 17px;background:#1ed760;color:#102217;font-weight:800;box-shadow:0 12px 32px #173b2730;cursor:pointer;display:flex;align-items:center;gap:8px}
+.soundtrack-tab .sp{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#111;color:#1ed760;font-size:14px}
+.soundtrack-drawer{position:fixed;right:18px;bottom:78px;z-index:7999;width:min(390px,calc(100vw - 30px));max-height:min(690px,78vh);overflow:auto;padding:20px;background:#fffaf8f5;border:1px solid #ead7db;border-radius:26px;box-shadow:0 24px 70px #5b344248;transform:translateX(calc(100% + 40px));opacity:0;transition:.35s ease}
+.soundtrack-drawer.open{transform:translateX(0);opacity:1}.soundtrack-drawer h3{margin:0 0 5px;font:700 30px Caveat,cursive;color:#8d4054}.soundtrack-drawer p{font-size:13px;line-height:1.55;color:#725d63;margin:0 0 14px}.soundtrack-drawer iframe{width:100%;border:0;border-radius:16px}
+.soundtrack-link{display:block;text-align:center;margin-top:12px;padding:11px 14px;border-radius:999px;background:#191414;color:white;text-decoration:none;font-size:13px;font-weight:800}
+.love-divider{max-width:700px;margin:30px auto;text-align:center;color:#b26b7b;font:600 22px Caveat,cursive}.love-divider:before,.love-divider:after{content:"  ✿  ";opacity:.5}
+@media(max-width:520px){.soundtrack-tab{right:12px;bottom:14px}.soundtrack-drawer{right:10px;bottom:68px}}
+
 </style>
 </head>
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
 <div class="song" id="song"></div>
-<div class="cd" id="cd"></div>
+<div class="cd" id="cd"></div><div class="love-divider">every little thing somehow comes back to you</div>
+<aside class="soundtrack-drawer" id="soundtrackDrawer" aria-label="Our playlist">
+  <h3>Our soundtrack ♡</h3>
+  <p>These are the songs that make me think of you. Every time I listen to them, some little part of us comes back to me.</p>
+  <iframe src="https://open.spotify.com/embed/playlist/0z0uFvtD38XcvprmToTZwF?utm_source=generator&theme=0" height="430" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Our Spotify playlist"></iframe>
+  <a class="soundtrack-link" href="https://open.spotify.com/playlist/0z0uFvtD38XcvprmToTZwF" target="_blank" rel="noopener">Open our playlist on Spotify ♡</a>
+</aside>
+<button class="soundtrack-tab" id="soundtrackTab" type="button" aria-label="Open our Spotify playlist"><span class="sp">♫</span><span>Our songs</span></button>
+
 <div class="note" id="note"></div>
 <button id="ob">Open our book</button>
 <main class="book" id="book"></main>
@@ -333,6 +351,10 @@ tick();setInterval(tick,1000);
  const startMusic=()=>{document.getElementById('loveCover').classList.add('opened');if(fr){const u=fr.src;fr.src='about:blank';requestAnimationFrame(()=>fr.src=u)}};
  document.getElementById('enterLove').addEventListener('click',startMusic,{once:true});
 })();
+
+/* our soundtrack drawer */
+const soundtrackTab=document.getElementById('soundtrackTab'),soundtrackDrawer=document.getElementById('soundtrackDrawer');
+soundtrackTab.addEventListener('click',()=>{const open=soundtrackDrawer.classList.toggle('open');soundtrackTab.querySelector('span:last-child').textContent=open?'Close songs':'Our songs';});
 
 /* hide the note while scrolling down, show it when scrolling up */
 let ly=0;addEventListener('scroll',()=>{const y=scrollY;document.getElementById('note').classList.toggle('away',y>ly&&y>140);ly=y},{passive:true});

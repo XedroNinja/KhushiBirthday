@@ -171,7 +171,39 @@ header h1:after{content:" ♡";color:#c9566f}
 #spotifyBackgroundPlayer.music-ready{opacity:1!important;pointer-events:auto!important}
 @media(max-width:600px){#spotifyBackgroundPlayer{bottom:max(10px,env(safe-area-inset-bottom));width:calc(100vw - 20px)}#spotifyBackgroundPlayer iframe{display:block;width:100%!important;height:80px!important;max-height:80px}}
 </style>
-</head>
+<style id="polish">
+body{background:radial-gradient(900px 420px at 50% -80px,#ffeef1 0%,transparent 70%),radial-gradient(700px 400px at 100% 40%,#f3effb 0%,transparent 70%),var(--bg)}
+header h1{letter-spacing:-.015em;text-wrap:balance}
+header::after{content:"\2740  \2661  \2740";display:block;margin-top:14px;color:#d58a9b;letter-spacing:.5em;font-size:18px}
+.page{border-radius:10px;box-shadow:0 1px 0 #fff inset,0 2px 4px #4a3f2a0d,0 18px 40px -10px #4a3f2a24;overflow:visible}
+.page::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:10px;opacity:.5;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23e8b8c4'%3E%3Ccircle cx='50' cy='24' r='19'/%3E%3Ccircle cx='76' cy='43' r='19'/%3E%3Ccircle cx='66' cy='73' r='19'/%3E%3Ccircle cx='34' cy='73' r='19'/%3E%3Ccircle cx='24' cy='43' r='19'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='12' fill='%23f3d98a'/%3E%3C/svg%3E") no-repeat right -30px bottom -30px/104px,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23cfc6e6'%3E%3Ccircle cx='50' cy='26' r='17'/%3E%3Ccircle cx='74' cy='44' r='17'/%3E%3Ccircle cx='65' cy='72' r='17'/%3E%3Ccircle cx='35' cy='72' r='17'/%3E%3Ccircle cx='26' cy='44' r='17'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='10' fill='%23f6e7b4'/%3E%3C/svg%3E") no-repeat left -22px bottom 46px/66px}
+.page>*:not(.pn):not(.new){position:relative;z-index:1}
+.bday .big{background:none;-webkit-text-fill-color:initial;color:inherit}
+.pn{background:#fff;border:1px solid var(--line);border-radius:99px;padding:0 13px;color:var(--rose);opacity:1;top:10px;right:12px;z-index:2}
+.new{box-shadow:0 4px 10px #c9566f55;z-index:2}
+h2{text-wrap:balance}
+h2::after{content:"";display:block;width:46px;height:3px;border-radius:3px;margin-top:8px;background:linear-gradient(90deg,var(--rose),#e8b8c4)}
+.cv{background:linear-gradient(180deg,#fff,#fffaf7);border:1px solid var(--line);border-radius:14px;padding:12px 10px 6px;margin-top:12px}
+.stat{border-radius:14px;background:linear-gradient(160deg,#fff,#fdf6f4);box-shadow:0 8px 20px -10px #c9566f40;border:1px solid #f0e3e1}
+.stat b,.big{background:linear-gradient(135deg,#c9566f,#d9a441);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.cap{color:#4a3f46}
+.cute{border-top:0;margin-top:26px;padding-top:18px;background:linear-gradient(180deg,#fff7f8,transparent 60%);border-radius:12px;padding-left:14px;padding-right:14px}
+.cute-h::before{content:"\2740  ";color:#d58a9b}
+.cq{border-radius:6px;position:relative}
+.cq .qt::before{content:"\201C";color:var(--rose);font-size:1.5em;line-height:0;margin-right:3px;vertical-align:-.2em}
+.cq::after{content:"";position:absolute;top:-9px;left:50%;width:54px;height:16px;transform:translateX(-50%) rotate(-2deg);background:#f3e1e6;opacity:.8}
+.diary{border-radius:10px}
+button{transition:transform .15s,background .2s,box-shadow .2s}
+button:active{transform:scale(.96)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.otd-item{border-radius:0 10px 10px 0}
+.dmsgs{border-radius:10px}
+.js-r{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.js-r.in{opacity:1;transform:none}
+@media(max-width:520px){.page::after{opacity:.3}.cd{font-size:15px;padding:4px 9px}.cd b{font-size:13px}header h1{font-size:clamp(30px,9vw,44px)}}
+@media(prefers-reduced-motion:reduce){.js-r{opacity:1;transform:none;transition:none}}
+</style>
+
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
 <section class="memory-play" id="song">
@@ -222,6 +254,9 @@ const months=Object.keys(D.monthly);
 const istToday=()=>new URLSearchParams(location.search).get('day')||new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata'}).format(new Date());
 const days=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5);
 Chart.defaults.font.family='Nunito,sans-serif';Chart.defaults.color='#4a4650';Chart.defaults.borderColor='#ebe6dd';
+try{const C=Chart.defaults;C.elements.bar.borderRadius=6;C.elements.bar.borderSkipped=false;C.elements.line.borderCapStyle='round';
+ C.plugins.tooltip.backgroundColor='#2b2a2eee';C.plugins.tooltip.cornerRadius=10;C.plugins.tooltip.padding=10;C.plugins.legend.labels.usePointStyle=true;C.plugins.legend.labels.boxWidth=8;C.animation.duration=1000;C.animation.easing='easeOutCubic'}catch(e){}
+
 const E=(h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild};
 function chart(root,cfg,cls=''){const w=E(`<div class="cv ${cls}"><canvas></canvas></div>`);root.append(w);cfg.options=Object.assign({responsive:true,maintainAspectRatio:false},cfg.options);const c=new Chart(w.firstChild,cfg);if(SINK)SINK.push(c);return c}
 const cap=(r,t)=>r.append(E(`<p class="cap">${t}</p>`));
@@ -548,6 +583,15 @@ function showNote(first){const L=notePool();if(!L.length){nb.style.display='none
  const x=L[ni++%L.length],set=()=>{nb.innerHTML=`${x.t}<small>${x.who=='harshil'?'Harshil':'Khushi'}, ${dl(x.d)}${x.tag?', '+x.tag:''}</small>`;nb.classList.remove('f')};
  if(first)set();else{nb.classList.add('f');setTimeout(set,500)}}
 showNote(true);setInterval(showNote,15000);
+
+/* ---------- polish: gentle reveal, count-up, softer charts ---------- */
+(function(){
+ const red=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);if(!('IntersectionObserver' in window))return;
+ const count=el=>{const m=el.textContent.match(/^([\d,]+)(\s+[A-Za-z].*)?$/);if(!m||red)return;const to=+m[1].replace(/,/g,''),suf=m[2]||'';if(!(to>0))return;const t0=performance.now();
+  const f=t=>{const p=Math.min(1,(t-t0)/1100),v=Math.round(to*(1-Math.pow(1-p,3)));el.textContent=v.toLocaleString('en-IN')+suf;if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)};
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;io.unobserve(e.target);e.target.classList.add('in');e.target.querySelectorAll('.stat b,.big').forEach(count);if(e.target.matches('.big'))count(e.target)}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+ let q=false;const scan=()=>{q=false;document.querySelectorAll('.cv:not([data-p]),.cute:not([data-p]),.stat:not([data-p]),.diary:not([data-p]),.big:not([data-p]),.cq:not([data-p])').forEach(el=>{el.dataset.p=1;if(red)return;el.classList.add('js-r');io.observe(el)})};
+ new MutationObserver(()=>{if(!q){q=true;requestAnimationFrame(scan)}}).observe(document.body,{childList:true,subtree:true});scan()})();
 </script>
 </body>
 </html>

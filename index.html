@@ -37,7 +37,7 @@ header p{font:500 clamp(19px,4vw,24px) Caveat,cursive;color:var(--mute);margin:1
 .dmsgs .bub.m{background:#f3efe6;font-style:italic;opacity:.85}
 .dmsgs .bub i{display:inline;margin-right:8px;font:600 15px Caveat,cursive;color:var(--mute)}
 .note.away{transform:rotate(-1deg)}
-.note{position:relative;z-index:5;max-width:500px;width:calc(100% - 28px);margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s}
+.note{position:relative;z-index:5;max-width:500px;width:calc(100% - 28px);margin:0 auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s}
 .note small{font:500 17px Caveat,cursive;color:var(--mute);margin-top:4px}
 .note.f{opacity:0}
 .book{max-width:820px;margin:0 auto;padding:12px 14px calc(70px + env(safe-area-inset-bottom,0));display:flex;flex-direction:column;gap:40px}
@@ -281,9 +281,10 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent}
 </aside>
 <button class="soundtrack-tab" id="soundtrackTab" type="button" aria-label="Open our Spotify playlist"><span class="sp">♫</span><span>Our songs</span></button>
 
-<div class="note" id="note"></div>
 <button id="ob">Open our book</button>
-<main class="book" id="book"></main>
+<main class="book" id="book">
+  <div class="note" id="note"></div>
+</main>
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
@@ -473,6 +474,7 @@ function render(){
  const t=istToday(),open=openPages(),next=PAGES.find(p=>p[0]>t);shown=open.length;
  document.getElementById('hd').textContent=open.length?'Page '+open.length+' of '+PAGES.length+', '+sd(open[open.length-1][0]):'Page 1 opens '+sd(PAGES[0][0]);
  book.innerHTML='';
+ book.append(nb);
  if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am<br><b class="tick" data-t="${next[0]}"></b></div>`));
  if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1]);book.append(diaryEl())}
  document.getElementById('ob').style.display=open.length?'block':'none'}

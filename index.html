@@ -20,6 +20,22 @@ header p{font:500 clamp(19px,4vw,24px) Caveat,cursive;color:var(--mute);margin:1
 .song{max-width:520px;margin:18px auto 0;padding:0 14px}.song small{display:block;text-align:center;font:500 18px Caveat,cursive;color:var(--mute);margin-bottom:6px}.song iframe{border:0;border-radius:12px;width:100%}
 .cv.tall{height:340px}
 .cute{margin-top:22px;padding:16px 14px 6px;border-top:1.5px dashed #e3cfd3;position:relative}.cute-h{font:600 18px Caveat,cursive;color:#a06a76;margin-bottom:8px}.cf{font:600 21px/1.3 Caveat,cursive;margin:6px 0;color:#4a3a3f}.cq{background:#fff6dc;border-radius:3px;box-shadow:0 5px 12px #5a4a2a1f;padding:12px 16px 8px;margin:10px 0 14px;max-width:440px;transform:rotate(var(--r,0deg))}.cq:nth-of-type(even){margin-left:auto;background:#ffeef2}.cq .qt{display:block;font:700 25px/1.2 Caveat,cursive;color:#3a2a30}.cq small{display:block;margin-top:4px;font:600 16px Caveat,cursive;color:#9a7a82}
+.diary{margin-top:34px;padding:28px 20px 22px;background:var(--card);border:1px solid var(--line);border-radius:4px;box-shadow:0 10px 28px #4a3f2a14;position:relative}
+.diary::before{content:"";position:absolute;top:-11px;left:50%;width:96px;height:22px;transform:translateX(-50%) rotate(2deg);background:#e8b8c4;opacity:.55}
+.diary h3{font:600 clamp(24px,5vw,32px)/1.15 Fraunces,Georgia,serif;margin:0 0 2px}
+.diary .sub{margin-bottom:12px}
+.otd-item{background:var(--bg);border-left:3px solid var(--rose);padding:8px 14px;margin:10px 0}
+.otd-item b{font:600 19px Fraunces,Georgia,serif}
+.otd-item q{display:block;font:600 21px/1.2 Caveat,cursive;margin-top:3px;quotes:none}
+.otd-item button,.dctl button{font:700 19px Caveat,cursive;background:none;border:1px solid var(--ink);border-radius:99px;padding:2px 14px;cursor:pointer;color:var(--ink);margin-top:6px}
+.dctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 6px}
+.dctl button{margin:0}.dctl .dsure{background:var(--rose);border-color:var(--rose);color:#fff}
+.dctl input{font:600 17px Nunito,sans-serif;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:5px 8px;color:var(--ink)}
+.dhead{font:600 22px/1.25 Caveat,cursive;margin:8px 0}
+.dmsgs{max-height:460px;overflow:auto;padding:4px 2px;border-top:1px dashed var(--line)}
+.dmsgs .bub{max-width:86%;white-space:pre-wrap;word-break:break-word}
+.dmsgs .bub.m{background:#f3efe6;font-style:italic;opacity:.85}
+.dmsgs .bub i{display:inline;margin-right:8px;font:600 15px Caveat,cursive;color:var(--mute)}
 .note.away{transform:translateY(-170%) rotate(-1deg)}
 .note{position:sticky;top:64px;z-index:5;max-width:500px;margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s,transform .35s}
 .note small{font:500 17px Caveat,cursive;color:var(--mute);margin-top:4px}
@@ -371,9 +387,46 @@ function render(){
  document.getElementById('hd').textContent=open.length?'Page '+open.length+' of '+PAGES.length+', '+sd(open[open.length-1][0]):'Page 1 opens '+sd(PAGES[0][0]);
  book.innerHTML='';
  if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am<br><b class="tick" data-t="${next[0]}"></b></div>`));
- if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1])}
+ if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1]);book.append(diaryEl())}
  document.getElementById('ob').style.display=open.length?'block':'none'}
 render();setInterval(()=>{if(openPages().length!=shown)render()},30000);
+
+/* ---------- diary + on this day ---------- */
+let DIARY=null,diaryP=null,diaryDay=null;
+const loadDiary=()=>diaryP||(diaryP=fetch('diary.json?v=1').then(r=>r.json()).then(j=>DIARY=j));
+const hm12=t=>{let h=+t.slice(0,2);const ap=h>=12?'pm':'am';return (h%12||12)+':'+t.slice(2)+' '+ap};
+function diaryEl(){
+ const w=E(`<section class="diary"><h3>Our diary</h3><p class="sub">Every day of our chat, as it happened</p>
+ <p class="cap" style="margin-top:0">On this day, <span class="td"></span></p><div class="otd"></div>
+ <div class="dctl"><button class="dp" aria-label="Previous day">&lsaquo;</button><input type="date"><button class="dn" aria-label="Next day">&rsaquo;</button><button class="dsure">Surprise me</button></div>
+ <div class="dhead"></div><div class="dmsgs"></div></section>`);
+ const inp=w.querySelector('input'),head=w.querySelector('.dhead'),box=w.querySelector('.dmsgs'),otd=w.querySelector('.otd');
+ const mn=START,mx=D.meta.last;inp.min=mn;inp.max=mx;
+ const today=istToday(),md=today.slice(5);w.querySelector('.td').textContent=+md.slice(3)+' '+MO[+md.slice(0,2)-1];
+ const sweet=/love|miss|cute|baby|babu|cutu|❤|♥|thank|sorry|care/i;
+ const show=(d,all)=>{
+  diaryDay=d;inp.value=d;const L=DIARY[d]||[];box.innerHTML='';
+  if(!L.length){head.textContent=d<mn||d>mx?'Our chat starts on '+dl(mn)+' and runs to '+dl(mx)+'.':dl(d)+': we did not talk on this day.';return}
+  const tx=L.filter(e=>!e[3]),k=tx.filter(e=>e[1]==0).length,vn=L.filter(e=>e[2]=='voice note').length,cl=L.filter(e=>/call,/.test(e[2])).length;
+  head.textContent=dl(d)+': '+n(tx.length)+' messages (Khushi '+n(k)+', Harshil '+n(tx.length-k)+')'+(vn?', '+n(vn)+' voice note'+(vn>1?'s':''):'')+(cl?', '+n(cl)+' call'+(cl>1?'s':''):'')+'.';
+  const cut=all?L.length:150;
+  L.slice(0,cut).forEach(e=>{const b=E(`<div class="bub ${e[1]?'harshil':'khushi'}${e[3]?' m':''}"><i></i><span></span></div>`);b.firstChild.textContent=hm12(e[0]);b.lastChild.textContent=e[3]?{'voice note':'🎙️ voice note','photo':'📷 photo','video':'🎞️ video'}[e[2]]||e[2]:e[2];box.append(b)});
+  if(L.length>cut){const m=E(`<button style="font:700 19px Caveat,cursive;margin:8px 0;border:1px solid var(--ink);border-radius:99px;background:none;padding:2px 14px;cursor:pointer">Show the rest of this day (${n(L.length-cut)} more)</button>`);m.onclick=()=>show(d,true);box.append(m)}
+  box.scrollTop=0};
+ const step=k=>{const t=new Date(Date.parse((diaryDay||mx)+'T00:00:00Z')+k*864e5).toISOString().slice(0,10);show(t<mn?mn:t>mx?mx:t)};
+ const fill=()=>{
+  [2023,2024,2025].forEach(y=>{const d=y+'-'+md,L=DIARY[d];if(!L||d>mx||d<mn)return;
+   const tx=L.filter(e=>!e[3]&&e[2].length>=12&&e[2].length<=90),pick=[...tx.filter(e=>sweet.test(e[2])),...tx].filter((e,i,a)=>a.indexOf(e)==i).slice(0,2);
+   const it=E(`<div class="otd-item"><b>${y}</b> <small></small></div>`);it.querySelector('small').textContent=n(L.filter(e=>!e[3]).length)+' messages';
+   pick.forEach(e=>{const q=E('<q></q>');q.textContent=(e[1]?'Harshil: ':'Khushi: ')+e[2];it.append(q)});
+   const b=E('<button>Read this day</button>');b.onclick=()=>{show(d);box.scrollIntoView({behavior:'smooth',block:'nearest'})};it.append(b);otd.append(it)});
+  if(!otd.children.length)otd.append(E('<p class="cap">Nothing from this date in past years yet. Tomorrow, maybe.</p>'));
+  show(mx)};
+ w.querySelector('.dp').onclick=()=>step(-1);w.querySelector('.dn').onclick=()=>step(1);
+ inp.onchange=()=>inp.value&&show(inp.value);
+ w.querySelector('.dsure').onclick=()=>{const ds=Object.keys(DIARY).filter(d=>DIARY[d].length>=30);show(ds[Math.floor(Math.random()*ds.length)])};
+ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();loadDiary().then(fill).catch(()=>{head.textContent='The diary could not load. Please refresh.'})}},{rootMargin:'400px'});io.observe(w);
+ return w}
 /* ---------- book view ---------- */
 const bk=document.getElementById('bk'),bp=document.getElementById('bkpage');let bi=0;
 function showBook(i,dir){

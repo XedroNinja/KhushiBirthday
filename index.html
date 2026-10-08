@@ -202,6 +202,24 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .js-r.in{opacity:1;transform:none}
 @media(max-width:520px){.page::after{opacity:.3}.cd{font-size:15px;padding:4px 9px}.cd b{font-size:13px}header h1{font-size:clamp(30px,9vw,44px)}}
 @media(prefers-reduced-motion:reduce){.js-r{opacity:1;transform:none;transition:none}}
+
+html{overflow-x:hidden;max-width:100%}
+.page,.cv,.diary,.cute,.row,.dmsgs{min-width:0;max-width:100%}
+.heat{grid-template-columns:30px repeat(24,minmax(0,1fr));gap:2px;width:100%}
+.heat>*{min-width:0}
+canvas,img,svg{max-width:100%}
+.cq,.cf,.gap q,.wall div,.bub,.otd-item q,.sub,.cap{overflow-wrap:anywhere}
+.stat{min-width:0;flex:1 1 120px}
+.tog button{color:var(--ink)}
+.sp{display:inline}
+@media(max-width:520px){
+.cd{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);right:auto;margin:8px auto 0;width:max-content;max-width:calc(100% - 20px);text-align:center;font-size:15px;padding:4px 12px}
+.sp br{display:none}.sp::after{content:"  \00B7  "}
+.note{top:58px}
+.heat{font-size:9px;grid-template-columns:26px repeat(24,minmax(0,1fr));gap:1px}
+.page{padding-left:12px;padding-right:12px}
+.cv{padding:10px 4px 4px}
+}
 </style>
 <style id="fit">
 /* keep everything inside the phone screen */
@@ -269,7 +287,7 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
 <script src="tracks.js?v=6"></script>
-<script src="cute.js?v=1"></script>
+<script src="cute.js?v=2"></script>
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <script>
 /* ---------- things you can edit ---------- */
@@ -402,7 +420,9 @@ const PAGES=[
  const rk=Object.keys(D.reply.khushi);chart(r,{type:'line',data:L2(rk.map(ml),rk.map(m=>D.reply.khushi[m]),rk.map(m=>D.reply.harshil[m]||null)),options:{...lineOpt,scales:{y:{title:{display:true,text:'median minutes to reply'}},x:{ticks:{maxTicksLimit:8}}}}});
  cap(r,`Median reply time: Khushi ${fmtR(D.reply_all.khushi)}, Harshil ${fmtR(D.reply_all.harshil)}. Replies within two hours only.`)}],
 ['','In your words','Things Khushi actually wrote',(r)=>{
- const w=E('<div class="wall"></div>');D.notes.slice(0,24).forEach((x,i)=>w.append(E(`<div style="--r:${(i%5-2)*1.3}deg">${x.t}<small>${dl(x.d)}</small></div>`)));r.append(w)}],
+ const w=E('<div class="wall"></div>');D.notes.slice(0,24).forEach((x,i)=>w.append(E(`<div style="--r:${(i%5-2)*1.3}deg">${x.t}<small>${dl(x.d)}</small></div>`)));r.append(w)
+ if((window.PRAISE||[]).length){cap(r,'And what I told you, in my own words:');const p=E('<div class="wall"></div>');
+  PRAISE.forEach((x,i)=>{const d=E(`<div style="--r:${(i%5-2)*1.3}deg;background:#fbe3e8"><span></span><small></small></div>`);d.firstChild.textContent=x.t;d.lastChild.textContent='Harshil, '+dl(x.d);p.append(d)});r.append(p)}}],
 ['','Year by year','Messages in each year',(r)=>{
  const y={},yd={};months.forEach(m=>y[yr(m)]=(y[yr(m)]||0)+mt(m));
  Object.keys(y).forEach(k=>{const a=k=='2023'?START:k+'-01-01',b=k=='2026'?D.meta.last:k+'-12-31';yd[k]=days(a,b)+1});
@@ -515,7 +535,7 @@ function tick(){const now=Date.now(),pv=new URLSearchParams(location.search).get
  document.querySelectorAll('.tick').forEach(e=>e.textContent=pv?'':'in '+hms(ist(e.dataset.t)-now));
  const cd=document.getElementById('cd');if(pv){cd.style.display='none';return}
  const nx=PAGES.find(p=>ist(p[0])>now),bd=ist('2026-10-27');let s='';
- if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><br>`;
+ if(nx)s+=`Page ${PAGES.indexOf(nx)+1} in <b>${hms(ist(nx[0])-now)}</b><span class="sp"><br></span>`;
  s+=now<bd?`Birthday in <b>${hms(bd-now)}</b>`:'Happy birthday';cd.innerHTML=s}
 tick();setInterval(tick,1000);
 /* always reopen at the cover/top instead of restoring an old mobile scroll position */
@@ -608,7 +628,7 @@ let ly=0;addEventListener('scroll',()=>{const y=scrollY;document.getElementById(
 /* ---------- rotating note, every 15 s ---------- */
 const nb=document.getElementById('note');let ni=0;
 function notePool(){const t=istToday();
- const L=[...(D.firsts||[]),...D.notes.map((x,i)=>({...x,who:'khushi',u:addDays('2026-10-12',Math.floor(i/4))}))].filter(x=>x.u<=t);
+ const L=[...(D.firsts||[]),...(window.PRAISE||[]).map((x,i)=>({...x,u:addDays('2026-10-06',Math.floor(i/2))})),...D.notes.map((x,i)=>({...x,who:'khushi',u:addDays('2026-10-12',Math.floor(i/4))}))].filter(x=>x.u<=t);
  return L.sort((a,b)=>a.u<b.u?1:a.u>b.u?-1:0)}
 function showNote(first){const L=notePool();if(!L.length){nb.style.display='none';return}nb.style.display='';
  const x=L[ni++%L.length],set=()=>{nb.innerHTML=`${x.t}<small>${x.who=='harshil'?'Harshil':'Khushi'}, ${dl(x.d)}${x.tag?', '+x.tag:''}</small>`;nb.classList.remove('f')};

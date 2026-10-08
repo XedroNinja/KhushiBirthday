@@ -19,6 +19,7 @@ header p{font:500 clamp(19px,4vw,24px) Caveat,cursive;color:var(--mute);margin:1
 .about{max-width:560px;margin:16px auto 0;font:600 22px/1.3 Caveat,cursive;color:var(--ink)}
 .song{max-width:520px;margin:18px auto 0;padding:0 14px}.song small{display:block;text-align:center;font:500 18px Caveat,cursive;color:var(--mute);margin-bottom:6px}.song iframe{border:0;border-radius:12px;width:100%}
 .cv.tall{height:340px}
+.cute{margin-top:22px;padding:16px 14px 6px;border-top:1.5px dashed #e3cfd3;position:relative}.cute-h{font:600 18px Caveat,cursive;color:#a06a76;margin-bottom:8px}.cf{font:600 21px/1.3 Caveat,cursive;margin:6px 0;color:#4a3a3f}.cq{background:#fff6dc;border-radius:3px;box-shadow:0 5px 12px #5a4a2a1f;padding:12px 16px 8px;margin:10px 0 14px;max-width:440px;transform:rotate(var(--r,0deg))}.cq:nth-of-type(even){margin-left:auto;background:#ffeef2}.cq .qt{display:block;font:700 25px/1.2 Caveat,cursive;color:#3a2a30}.cq small{display:block;margin-top:4px;font:600 16px Caveat,cursive;color:#9a7a82}
 .note.away{transform:translateY(-170%) rotate(-1deg)}
 .note{position:sticky;top:64px;z-index:5;max-width:500px;margin:20px auto;padding:14px 20px 12px;background:var(--butter);border-radius:4px;transform:rotate(-1deg);box-shadow:0 6px 18px #5a4a2a1f;font:700 23px/1.2 Caveat,cursive;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:opacity .5s,transform .35s}
 .note small{font:500 17px Caveat,cursive;color:var(--mute);margin-top:4px}
@@ -189,6 +190,7 @@ header h1:after{content:" ♡";color:#c9566f}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js?v=5"></script>
 <script src="tracks.js?v=6"></script>
+<script src="cute.js?v=1"></script>
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <script>
 /* ---------- things you can edit ---------- */
@@ -351,6 +353,13 @@ PAGES.forEach((p,i)=>p[0]=addDays('2026-10-05',i));
 const sd=d=>{const[y,m,x]=d.split('-');return +x+' '+MO[+m-1]};
 const book=document.getElementById('book');let shown=-1;
 const openPages=()=>PAGES.filter(p=>p[0]<=istToday());
+function cuteAdd(el,title){
+ const L=(window.CUTE||{})[title];if(!L||!L.length)return;
+ const w=E('<div class="cute"><div class="cute-h">little details from our chat</div></div>');
+ L.forEach((x,i)=>{
+  if(x.k=='f'){const p=E('<p class="cf"></p>');p.textContent=x.t;w.append(p)}
+  else{const q=E('<div class="cq"><span class="qt"></span><small></small></div>');q.style.setProperty('--r',((i%3)-1)*1.4+'deg');q.firstChild.textContent=x.t;q.lastChild.textContent=(x.who=='harshil'?'Harshil':'Khushi')+', '+dl(x.d);w.append(q)}});
+ el.append(w)}
 function pageEl(i,isNew){
  const p=PAGES[i];
  return E(`<section class="page c${i%5+1}" style="--tr:${(i%4-1.5)*2}deg">${isNew?'<span class="new">new</span>':''}<span class="pn">page ${i+1}, ${sd(p[0])}</span><h2>${p[1]}</h2><p class="sub">${p[2]}</p></section>`)}
@@ -359,7 +368,7 @@ function render(){
  document.getElementById('hd').textContent=open.length?'Page '+open.length+' of '+PAGES.length+', '+sd(open[open.length-1][0]):'Page 1 opens '+sd(PAGES[0][0]);
  book.innerHTML='';
  if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am<br><b class="tick" data-t="${next[0]}"></b></div>`));
- if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el)}
+ if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1])}
  document.getElementById('ob').style.display=open.length?'block':'none'}
 render();setInterval(()=>{if(openPages().length!=shown)render()},30000);
 /* ---------- book view ---------- */
@@ -367,7 +376,7 @@ const bk=document.getElementById('bk'),bp=document.getElementById('bkpage');let 
 function showBook(i,dir){
  const n=openPages().length;bi=Math.max(0,Math.min(n-1,i));
  (SINK||[]).forEach(c=>c.destroy());SINK=[];
- bp.className='bkpage '+(dir||'');bp.innerHTML='';const el=pageEl(bi);bp.append(el);PAGES[bi][3](el);bp.scrollTop=0;
+ bp.className='bkpage '+(dir||'');bp.innerHTML='';const el=pageEl(bi);bp.append(el);PAGES[bi][3](el);cuteAdd(el,PAGES[bi][1]);bp.scrollTop=0;
  document.getElementById('bkc').textContent='Page '+(bi+1)+' of '+n;
  document.getElementById('bkp').disabled=bi==0;document.getElementById('bkn').disabled=bi>=n-1}
 function openBook(){bk.hidden=false;document.body.style.overflow='hidden';showBook(0)}

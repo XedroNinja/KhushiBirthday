@@ -195,7 +195,7 @@ header h1:after{content:" ♡";color:#c9566f}
 <script>
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
-const MILESTONES={anniv:'2023-11-18',aug1:['2023-08-01','2024-08-01'],tripDate:null /* set to 'YYYY-MM-DD' of the trip start to show its message count */};
+const MILESTONES={anniv:'2023-11-18',aug1:['2023-08-01','2024-08-01'],tripDate:'2024-06-13'};
 const LETTER="Khushi, I counted the days, the calls and the sorrys, and every number ended up pointing back to you. Happy birthday. This was never the last page, just the last one of this book.";
 /* ----------------------------------------- */
 let SINK=null;const D=DATA,K='#c9566f',H='#6a6fb3',MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -299,10 +299,13 @@ const PAGES=[
 ['','Coming back, part two','And the ones after',(r)=>comeback(r,1)],
 ['','Dates that matter','Pinned on the map',(r)=>{
  const dd=d=>D.daily[d]||0,avg=Math.round(D.meta.total/D.meta.active_days);
- const pts=[[dl(START),dd(START)],['18 Nov 2023',dd(MILESTONES.anniv)],...MILESTONES.aug1.map(d=>[dl(d),dd(d)]),['An average day',avg]];
- r.append(E(`<div class="row">${stat(dl(START),'first "Hey"',-2)}${stat(dl(MILESTONES.anniv),'our anniversary',2)}${stat('1 August','a date only we know',-1)}${stat('Summer 2024','our first trip together',1)}</div>`));
+ const pts=[[dl(START),dd(START)],['18 Nov 2023',dd(MILESTONES.anniv)],...MILESTONES.aug1.map(d=>[dl(d),dd(d)]),[dl(MILESTONES.tripDate),dd(MILESTONES.tripDate)],['An average day',avg]];
+ r.append(E(`<div class="row">${stat(dl(START),'first "Hey"',-2)}${stat(dl(MILESTONES.anniv),'our anniversary',2)}${stat('1 August','a date only we know',-1)}${stat(dl(MILESTONES.tripDate),'our first trip together',1)}</div>`));
  chart(r,{type:'bar',data:{labels:pts.map(p=>p[0]),datasets:[{data:pts.map(p=>p[1]),backgroundColor:pts.map((p,i)=>i==pts.length-1?'#bbb':K)}]},options:nof()});
- cap(r,'Messages on our days, against an average day.')}],
+ cap(r,'Messages on our days, against an average day.');
+ const tj=[];for(let d=1;d<=30;d++)tj.push('2024-06-'+String(d).padStart(2,'0'));
+ chart(r,{type:'bar',data:{labels:tj.map(d=>+d.slice(8)),datasets:[{data:tj.map(dd),backgroundColor:tj.map(d=>d>='2024-06-13'&&d<='2024-06-16'?'#d9a441':K)}]},options:nof({scales:{x:{title:{display:true,text:'June 2024'}}}})});
+ cap(r,`June 2024, day by day. The gold bars, 13 to 16 June, are the quietest days of the month: ${tj.slice(12,16).map(dd).join(', ')} messages.`)}],
 ['','Every day, in color','One square per day since 27 June 2023',(r)=>{
  const w=E('<div class="cal"><div class="g"></div></div>'),g=w.firstChild,mx=Math.max(...Object.values(D.daily));
  const s=new Date(START+'T00:00:00Z'),pad=(s.getUTCDay()+6)%7;for(let i=0;i<pad;i++)g.append(E('<i style="background:none"></i>'));

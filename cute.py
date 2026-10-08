@@ -82,7 +82,7 @@ C_['I love you, I miss you']=[Q('2023-11-09',H,'i miss you more'),Q('2023-11-30'
 C_['Hearts and emojis']=[F(f"Her most-hearted day: {dl(hday)}, with {n(hn)} hearts in her messages.")]
 C_['Sorry and gussa']=[Q('2024-07-21',K,'Koi sorry ki need nhi babu'),Q('2024-07-09',K,'Hnji sorry baby')]
 C_['The quiet days']=[F(f"Our longest quiet stretch was {qn} days, {dl(str(qa))} to {dl(str(qb))}. Then we were back.")]
-C_['Dates that matter']=[F("The first I love you from each of us:"),Q('2024-06-03',H,'I love youuu'),Q('2024-06-16',K,'I love you too')]
+C_['Dates that matter']=[F('13 June 2024, our first trip together. The days before it:'),Q('2024-06-12',H,'Ab packing kregi'),Q('2024-06-12',K,'Aaj maine vo momos vala dekha'),Q('2024-06-13',H,'Meri packing done'),Q('2024-06-13',K,'Mera bhi almost done'),F("The first I love you from each of us:"),Q('2024-06-03',H,'I love youuu'),Q('2024-06-16',K,'I love you too')]
 C_['Every day, in color']=[F(f"Days with 100 or more messages: {n(n100)}. With 200 or more: {n(sum(1 for v in days.values() if v>=200))}. Our record: {n(max(days.values()))} in one day.")]
 C_['Busiest days, fastest replies']=[F(f"On our busiest day, {dl(bd)}, the first message was:"),Fq(bdr[0]),F("And the last:"),Fq(bdr[-1])]
 C_['Year by year']=[F('How the next two new years began with her:'),Q('2025-01-01',K,'I love you too babbyy'),Q('2026-01-01',K,'Happy new year harshil')]

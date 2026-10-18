@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#faf8f4">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="For Khushi">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>(function(){try{var p=localStorage.getItem('theme'),h=+new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',hour:'numeric',hour12:false}).format(new Date())%24,d=p?p=='dark':(h>=21||h<6);document.documentElement.dataset.theme=d?'dark':'light';var m=document.querySelector('meta[name=theme-color]');if(m&&d)m.content='#16131f'}catch(e){document.documentElement.dataset.theme='light'}})()</script>
 <title>Khushi, our pages</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
@@ -253,10 +261,61 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent}
 .dctl{max-width:100%}.dctl input{min-width:0;flex:1 1 130px}
 @media(max-width:420px){.page{padding:30px 12px 20px}.cv{padding:10px 4px 4px}.book{padding-left:10px;padding-right:10px}}
 </style>
+<style id="night">
+.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0 0;padding:0 12px}
+.tools button{font:700 18px Caveat,cursive;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 16px;color:var(--ink);cursor:pointer}
+.quiz{margin-top:34px;padding:28px 20px 22px;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px #4a3f2a14;position:relative}
+.quiz::before{content:"";position:absolute;top:-11px;left:50%;width:96px;height:22px;transform:translateX(-50%) rotate(-2deg);background:#cfc6e6;opacity:.6}
+.quiz h3{font:600 clamp(24px,5vw,32px)/1.15 Fraunces,Georgia,serif;margin:0 0 2px}
+.qscore{font:600 19px Caveat,cursive;color:var(--mute);margin:6px 0 10px}
+.qcard{background:#fff6dc;border-radius:4px;box-shadow:0 6px 14px #5a4a2a22;padding:16px 18px;margin:10px 0 14px;font:700 27px/1.25 Caveat,cursive;color:#3a2a30;transform:rotate(-.6deg);overflow-wrap:anywhere}
+.qask{font:600 20px Caveat,cursive;margin:6px 0 8px}
+.qopts{display:flex;flex-wrap:wrap;gap:10px}
+.qopts button,.qgo{font:700 21px Caveat,cursive;background:var(--card);color:var(--ink);border:1.5px solid var(--ink);border-radius:99px;padding:5px 20px;cursor:pointer}
+.qopts button:disabled{opacity:.55;cursor:default}
+.qopts button.ok{background:#4f9d6a;border-color:#4f9d6a;color:#fff;opacity:1}
+.qopts button.no{background:#c9566f;border-color:#c9566f;color:#fff;opacity:1}
+.qfb{font:600 23px/1.25 Caveat,cursive;margin:12px 0 4px}
+.qgo{background:var(--rose);border-color:var(--rose);color:#fff;margin-top:6px}
+.a2{position:fixed;inset:0;z-index:60;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px}
+.a2 div{background:var(--card);color:var(--ink);border-radius:14px;padding:22px 20px;max-width:360px;font:600 22px/1.3 Caveat,cursive;text-align:center}
+.a2 button{margin-top:12px;font:700 20px Caveat,cursive;background:var(--rose);color:#fff;border:0;border-radius:99px;padding:5px 22px;cursor:pointer}
+html[data-theme=dark]{--bg:#16131f;--card:#211c2d;--ink:#f3ebf0;--mute:#b4a9bb;--line:#372f46;--butter:#5b4b2a;color-scheme:dark}
+html[data-theme=dark]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;animation:twk 6s ease-in-out infinite alternate;background-image:radial-gradient(1.4px 1.4px at 22px 34px,#fff 50%,transparent),radial-gradient(1px 1px at 96px 120px,#fde7ff 50%,transparent),radial-gradient(1.6px 1.6px at 170px 60px,#fff 50%,transparent),radial-gradient(1px 1px at 60px 200px,#ffe9a8 50%,transparent),radial-gradient(1.2px 1.2px at 210px 180px,#fff 50%,transparent);background-size:240px 240px}
+@keyframes twk{from{opacity:.25}to{opacity:.7}}
+html[data-theme=dark] body{background:radial-gradient(900px 420px at 50% -80px,#3b2342 0%,transparent 70%),radial-gradient(700px 400px at 100% 40%,#1c2144 0%,transparent 70%),#16131f!important;color:var(--ink)}
+html[data-theme=dark] :is(.page,.diary,.quiz,.love-card,.us-card,.memory-reveal,.memory-orbit,.soundtrack-drawer,.lock,.dmsgs,.cd,.chips span,.stat,.cv,.heat,.a2 div,.tools button){background:var(--card)!important;color:var(--ink);border-color:var(--line)!important}
+html[data-theme=dark] :is(#bk,.bkbar,.bknav){background:var(--bg)!important;color:var(--ink);border-color:var(--line)!important}
+html[data-theme=dark] :is(.otd-item,.gap){background:#2a2336!important;color:var(--ink)}
+html[data-theme=dark] .cute{background:transparent!important}
+html[data-theme=dark] .cq{background:#3b3225!important}
+html[data-theme=dark] .cq:nth-of-type(even){background:#3d2631!important}
+html[data-theme=dark] .cq .qt,html[data-theme=dark] .cq small{color:#f3ebf0}
+html[data-theme=dark] .note{background:#5b4b2a!important;color:#fbf2dc}
+html[data-theme=dark] .note small{color:#dccfb2}
+html[data-theme=dark] .bub.khushi{background:#4b2a3b}
+html[data-theme=dark] .bub.harshil{background:#2d3159}
+html[data-theme=dark] .bub,html[data-theme=dark] .dmsgs .bub{color:var(--ink)}
+html[data-theme=dark] .bub.m,html[data-theme=dark] .dmsgs .bub.m{background:#2b2536!important}
+html[data-theme=dark] :is(h1,h2,h3,.cap,.about,header p,.cf,.dhead,.intro,.otd-item b,.gap b){color:var(--ink)}
+html[data-theme=dark] :is(.sub,.fine,.stat span,.bub i,.cute-h,.dmsgs .bub i,.qscore,.heat){color:var(--mute)}
+html[data-theme=dark] .pn{background:var(--card)!important;color:#ff9db4;border-color:var(--line)!important}
+html[data-theme=dark] .page::after{opacity:.3}
+html[data-theme=dark] :is(input,.dctl button,.otd-item button,.tog button,.bkbar button,.bknav button,.qopts button){background:var(--bg);color:var(--ink);border-color:var(--mute)}
+html[data-theme=dark] .qopts button.ok{background:#4f9d6a;color:#fff}
+html[data-theme=dark] .qopts button.no{background:#c9566f;color:#fff}
+html[data-theme=dark] .tog button.on{background:#f3ebf0;color:#16131f}
+html[data-theme=dark] .dctl .dsure,html[data-theme=dark] .qgo{background:var(--rose);color:#fff;border-color:var(--rose)}
+html[data-theme=dark] #ob{background:#f3ebf0!important;color:#16131f!important}
+html[data-theme=dark] .qcard{background:#3b3225;color:#f6ece9}
+html[data-theme=dark] .wall div{color:#2b2a2e}
+</style>
+
 
 
 <body><div class="love-cover" id="loveCover"><div class="love-card"><div class="petals"><i>♡</i><i>✿</i><i>♡</i></div><div class="tiny">a little piece of us</div><h2>For Khushi</h2><p>Three years, thousands of messages, tiny fights, long talks, laughter, love and everything in between. I kept some of it here for you.</p><button id="enterLove">Open our scrapbook ♡</button></div></div><div class="love-vines" aria-hidden="true"><span>🌸</span><span>🌷</span><span>🌼</span><span>🌺</span></div>
 <header><h1>Khushi,<br>this one is for you</h1><p id="hd"></p><p class="about">This scrapbook is a digital retelling of our chat, and only our chat. We can't put our calls and voice notes into it, but this is the best way I know to show you how much I care about you.</p></header>
+<div class="tools"><button id="themeBtn" type="button"></button><button id="a2hs" type="button">Add to home screen</button></div>
 <section class="memory-play" id="song">
   <h3>Tap around our little universe ♡</h3>
   <p>Some things became part of us. Touch one and let this scrapbook take you back.</p>
@@ -304,7 +363,7 @@ const dl=d=>{const[y,m,x]=d.split('-');return +x+' '+MO[+m-1]+' '+y};
 const months=Object.keys(D.monthly);
 const istToday=()=>new URLSearchParams(location.search).get('day')||new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata'}).format(new Date());
 const days=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5);
-Chart.defaults.font.family='Nunito,sans-serif';Chart.defaults.color='#4a4650';Chart.defaults.borderColor='#ebe6dd';
+Chart.defaults.font.family='Nunito,sans-serif';const chartTheme=()=>{const d=document.documentElement.dataset.theme=='dark';Chart.defaults.color=d?'#d8cfdd':'#4a4650';Chart.defaults.borderColor=d?'#3a3249':'#ebe6dd'};chartTheme();
 const LOVEY=/love|luv|\bily\b|miss|yaad|\bcare|hug|kiss|cute|pyar|pyari|baby|babu|bby|cutu|\bjaanu?\b|shona|proud|thank|good ?(night|morning)|\bgm\b|\bgn\b|sleep|so ?ja|khana|khaya|paani|dawai|medicine|\bsafe|here for you|always with you|don'?t worry|tension|chinta|it'?s ok|sab theek|mai hu|main hu|i am here|support|beautiful|pretty|smart|sundar|♥|❤|💕|💖|💗|🫶|😘|🥰|😍|🤗|💋/i;
 try{const C=Chart.defaults;C.elements.bar.borderRadius=6;C.elements.bar.borderSkipped=false;C.elements.line.borderCapStyle='round';
  C.plugins.tooltip.backgroundColor='#2b2a2eee';C.plugins.tooltip.cornerRadius=10;C.plugins.tooltip.padding=10;C.plugins.legend.labels.usePointStyle=true;C.plugins.legend.labels.boxWidth=8;C.animation.duration=1000;C.animation.easing='easeOutCubic'}catch(e){}
@@ -476,7 +535,7 @@ function render(){
  document.getElementById('hd').textContent=open.length?'Page '+open.length+' of '+PAGES.length+', '+sd(open[open.length-1][0]):'Page 1 opens '+sd(PAGES[0][0]);
  book.innerHTML='';
  if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am<br><b class="tick" data-t="${next[0]}"></b></div>`));
- if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1]);book.append(diaryEl())}
+ if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1]);book.append(diaryEl());book.append(quizEl())}
  document.getElementById('ob').style.display=open.length?'block':'none'}
 render();setInterval(()=>{if(openPages().length!=shown)render()},30000);
 
@@ -646,6 +705,63 @@ showNote(true);setInterval(showNote,15000);
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;io.unobserve(e.target);e.target.classList.add('in');e.target.querySelectorAll('.stat b,.big').forEach(count);if(e.target.matches('.big'))count(e.target)}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
  let q=false;const scan=()=>{q=false;document.querySelectorAll('.cv:not([data-p]),.cute:not([data-p]),.stat:not([data-p]),.diary:not([data-p]),.big:not([data-p]),.cq:not([data-p])').forEach(el=>{el.dataset.p=1;if(red)return;el.classList.add('js-r');io.observe(el)})};
  new MutationObserver(()=>{if(!q){q=true;requestAnimationFrame(scan)}}).observe(document.body,{childList:true,subtree:true});scan()})();
+
+/* ---------- never-ending quiz ---------- */
+const QK='khushiQuiz1';
+const qDef=()=>({c:[],w:{},n:0,s:0,b:0,r:0,t:0,rc:[]});
+const qLoad=()=>{try{return Object.assign(qDef(),JSON.parse(localStorage.getItem(QK)||'{}'))}catch(e){return qDef()}};
+const qSave=s=>{try{localStorage.setItem(QK,JSON.stringify(s))}catch(e){}};
+let QDATA=null,QP=null;const loadQuiz=()=>QP||(QP=fetch('quiz.json?v=1').then(r=>r.json()).then(j=>QDATA=j));
+function qNext(s){
+ const cs=new Set(s.c),rc=new Set(s.rc),pool=[],relax=[];
+ for(const it of QDATA)for(const t of['w','y']){const id=it[0]+t;if(cs.has(id))continue;const due=s.w[id];if(due!==undefined&&s.n<due)continue;(rc.has(it[0])?relax:pool).push([it,t,id])}
+ const P=pool.length?pool:relax;if(P.length)return P[Math.floor(Math.random()*P.length)];
+ const waiting=Object.entries(s.w).filter(([id])=>!cs.has(id)).sort((a,b)=>a[1]-b[1])[0];
+ if(waiting){const it=QDATA[+waiting[0].slice(0,-1)],t=waiting[0].slice(-1);if(it)return[it,t,waiting[0]]}
+ return null}
+function quizEl(){
+ const w=E(`<section class="quiz"><h3>Who said it?</h3><p class="sub">A never-ending quiz of our real messages</p><div class="qscore"></div><div class="qbody"></div></section>`);
+ const body=w.querySelector('.qbody'),sc=w.querySelector('.qscore');
+ const score=s=>{sc.textContent=s.t?`Streak ${s.s} · Best ${s.b} · Right ${n(s.r)} of ${n(s.t)}`:''};
+ const intro=()=>{const s=qLoad();score(s);body.innerHTML='';const b=E(`<button class="qgo">${s.t?'Keep playing':'Start the quiz'}</button>`);b.onclick=()=>loadQuiz().then(ask).catch(()=>{body.textContent='The quiz could not load. Please refresh.'});body.append(b)};
+ const ask=()=>{
+  const s=qLoad(),q=qNext(s);body.innerHTML='';
+  if(!q){body.append(E('<p class="qfb">You have answered every question right. That is all of them!</p>'));const b=E('<button class="qgo">Start a fresh round</button>');b.onclick=()=>{qSave(qDef());ask()};body.append(b);return}
+  const [it,t,id]=q,who=it[1],yr=+it[2].slice(0,4);
+  const card=E('<div class="qcard"></div>');card.textContent=it[3];
+  body.append(card,E(`<p class="qask">${t=='w'?'Who wrote this?':'Which year was this written?'}</p>`));
+  const opts=E('<div class="qopts"></div>');
+  const choices=t=='w'?[['Khushi',0],['Harshil',1]]:[2023,2024,2025,2026].map(y=>[String(y),y]);
+  choices.forEach(([lab,val])=>{const b=E('<button></button>');b.textContent=lab;b.onclick=()=>{
+   const right=t=='w'?val===who:val===yr,st=qLoad();st.t++;st.n++;st.rc=[...st.rc,it[0]].slice(-60);
+   if(right){st.r++;st.s++;st.b=Math.max(st.b,st.s);st.c.push(id);delete st.w[id]}else{st.s=0;st.w[id]=st.n+40}
+   qSave(st);score(st);
+   [...opts.children].forEach(x=>{x.disabled=true;const v=choices.find(c=>c[0]==x.textContent)[1];if(t=='w'?v===who:v===yr)x.classList.add('ok')});
+   if(!right)b.classList.add('no');
+   const fb=E('<p class="qfb"></p>');fb.textContent=(right?'Yes! ':'Not quite. ')+'It was '+(who?'Harshil':'Khushi')+', '+dl(it[2])+'.'+(right?'':' You will see this one again much later.');
+   const nx=E('<button class="qgo">Next</button>');nx.onclick=ask;body.append(fb,nx)};opts.append(b)});
+  body.append(opts)};
+ const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();intro()}},{rootMargin:'300px'});io.observe(w);
+ return w}
+
+/* ---------- night theme ---------- */
+const themeBtn=document.getElementById('themeBtn');
+const isDark=()=>document.documentElement.dataset.theme=='dark';
+function paintTheme(){const d=isDark();themeBtn.textContent=d?'☀️ Day mode':'🌙 Night mode';const m=document.querySelector('meta[name=theme-color]');if(m)m.content=d?'#16131f':'#faf8f4';chartTheme()}
+function setTheme(d,save){document.documentElement.dataset.theme=d?'dark':'light';if(save)try{localStorage.setItem('theme',d?'dark':'light')}catch(e){}paintTheme();render();if(typeof bk!=='undefined'&&!bk.hidden)showBook(bi)}
+themeBtn.onclick=()=>setTheme(!isDark(),true);paintTheme();
+setInterval(()=>{try{if(localStorage.getItem('theme'))return}catch(e){}const h=+new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',hour:'numeric',hour12:false}).format(new Date())%24,d=h>=21||h<6;if(d!==isDark())setTheme(d,false)},60000);
+
+/* ---------- add to home screen ---------- */
+(function(){
+ const btn=document.getElementById('a2hs'),sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+ if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+ if(sa){btn.style.display='none';return}
+ let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+ addEventListener('appinstalled',()=>{btn.style.display='none'});
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ const tip=()=>{const m=E(`<div class="a2"><div><span></span><br><button>Okay</button></div></div>`);m.querySelector('span').textContent=ios?'Tap the Share button at the bottom of Safari, then choose "Add to Home Screen". Then she opens like an app.':'Open the browser menu and choose "Install app" or "Add to Home screen".';m.querySelector('button').onclick=()=>m.remove();m.onclick=e=>{if(e.target===m)m.remove()};document.body.append(m)};
+ btn.onclick=()=>{if(dp){dp.prompt();dp.userChoice.finally(()=>{dp=null})}else tip()}})();
 </script>
 </body>
 </html>

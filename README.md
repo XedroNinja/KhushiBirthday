@@ -6,3 +6,5 @@ Static site. Host with GitHub Pages (Settings > Pages > Deploy from branch > mai
 - `index.html` unlocks one page per day at 12:00 am IST (4 Oct to 26 Oct 2026), birthday page on 27 Oct.
 - Preview any day: `index.html?day=2026-10-15`
 - Edit `MILESTONES`, `LETTER` and page texts at the top of `index.html`.
+- `quiz.py` (run after `explore.py`) writes `quiz.json`: real loving messages for the never-ending quiz (who wrote it / which year). Progress is kept on her phone.
+- Night theme (auto 9 pm to 6 am IST, or the button) and install-to-home-screen (`manifest.webmanifest`, `sw.js`, icons).

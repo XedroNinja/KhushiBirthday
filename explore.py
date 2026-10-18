@@ -1,11 +1,13 @@
 import re,collections,datetime as dt
-P=re.compile(r'^\u200e?\[(\d+)/(\d+)/(\d+),\s+(\d+):(\d+):(\d+)\s*([AP]M)\]\s+([^:]+?):\s(.*)$')
+P=re.compile(r'^\u200e?\[(\d+)/(\d+)/(\d+),\s+(\d+):(\d+):(\d+)\s*([AP]M)\]\s+([^:]+?):\s?(.*)$')
 rows=[];cur=None
 for l in open('_chat.txt',encoding='utf8'):
     l=l.rstrip('\r\n')
     m=P.match(l)
     if m:
         mo,d,y,h,mi,s,ap,who,t=m.groups();h=int(h)%12+(12 if ap=='PM' else 0)
+        if not t.strip():
+            cur=None;continue
         cur=[dt.datetime(2000+int(y),int(mo),int(d),h,int(mi),int(s)),who,t];rows.append(cur)
     elif cur: cur[2]+='\n'+l
 print(len(rows),collections.Counter(r[1] for r in rows))

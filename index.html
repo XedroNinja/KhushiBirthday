@@ -287,7 +287,7 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent}
 <main class="book" id="book"></main>
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="data.js?v=7"></script>
+<script src="data.js?v=8"></script>
 <script src="tracks.js?v=6"></script>
 <script src="cute.js?v=3"></script>
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
@@ -449,7 +449,7 @@ const PAGES=[
 ];
 function comeback(r,part){
  const top=D.comebacks.slice(0,8).sort((a,b)=>a.back<b.back?-1:1),sl=top.slice(part*4,part*4+4);
- sl.forEach(c=>{const who=c.who=='khushi'?'Khushi':'Harshil',ok=c.text&&LOVEY.test(c.text),lq=!ok&&c.lq,g=E(`<div class="gap"><b>${n(c.hours/24)} days quiet</b>, ${dl(c.from)} to ${dl(c.back)}<br>${who} wrote first${ok?':':'.'}${ok||lq?'<q></q>':''}</div>`);if(ok)g.querySelector('q').textContent=c.text+(c.text.length>=90?'...':'');else if(lq)g.querySelector('q').textContent='Soon after, '+(c.lw=='khushi'?'Khushi':'Harshil')+': '+c.lq;r.append(g)});
+ sl.forEach(c=>{const who=c.who=='khushi'?'Khushi':'Harshil',g=E(`<div class="gap"><b>${n(c.hours/24)} days quiet</b>, ${dl(c.from)} to ${dl(c.back)}<br>${who} wrote first${c.text?':<q></q>':'.'}</div>`);if(c.text)g.querySelector('q').textContent=c.text;r.append(g)});
  if(part==0){chart(r,{type:'bar',data:{labels:top.map(c=>dl(c.back).slice(0,-5)),datasets:[{data:top.map(c=>c.hours/24),backgroundColor:'#a79bd1'}]},options:{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'days of silence'}}}}});cap(r,'The eight longest silences we had. Each one ended with a message.')}
  if(part==1){const w={khushi:0,harshil:0};D.comebacks.forEach(c=>w[c.who]++);
   chart(r,{type:'doughnut',data:{labels:['Khushi','Harshil'],datasets:[{data:[w.khushi,w.harshil],backgroundColor:[K,H]}]}});
@@ -482,7 +482,7 @@ render();setInterval(()=>{if(openPages().length!=shown)render()},30000);
 
 /* ---------- diary + on this day ---------- */
 let DIARY=null,diaryP=null,diaryDay=null;
-const loadDiary=()=>diaryP||(diaryP=fetch('diary.json?v=1').then(r=>r.json()).then(j=>DIARY=j));
+const loadDiary=()=>diaryP||(diaryP=fetch('diary.json?v=2').then(r=>r.json()).then(j=>DIARY=j));
 const hm12=t=>{let h=+t.slice(0,2);const ap=h>=12?'pm':'am';return (h%12||12)+':'+t.slice(2)+' '+ap};
 function diaryEl(){
  const w=E(`<section class="diary"><h3>Our diary</h3><p class="sub">Every day of our chat, as it happened</p>

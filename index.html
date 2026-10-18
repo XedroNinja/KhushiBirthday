@@ -202,6 +202,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .js-r{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
 .js-r.in{opacity:1;transform:none}
 @media(max-width:520px){.page::after{opacity:.3}.cd{font-size:15px;padding:4px 9px}.cd b{font-size:13px}header h1{font-size:clamp(30px,9vw,44px)}}
+.note,.note.away{position:relative!important;top:auto!important;transform:rotate(-1deg)!important}
 @media(prefers-reduced-motion:reduce){.js-r{opacity:1;transform:none;transition:none}}
 
 html{overflow-x:hidden;max-width:100%}
@@ -286,9 +287,9 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent}
 <main class="book" id="book"></main>
 <div id="bk" hidden><div class="bkbar"><b>Our book</b><button id="bkx">Close</button></div><div class="bkpage" id="bkpage"></div><div class="bknav"><button id="bkp">Back</button><span id="bkc"></span><button id="bkn">Next</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="data.js?v=5"></script>
+<script src="data.js?v=7"></script>
 <script src="tracks.js?v=6"></script>
-<script src="cute.js?v=2"></script>
+<script src="cute.js?v=3"></script>
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <script>
 /* ---------- things you can edit ---------- */
@@ -304,6 +305,7 @@ const months=Object.keys(D.monthly);
 const istToday=()=>new URLSearchParams(location.search).get('day')||new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata'}).format(new Date());
 const days=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5);
 Chart.defaults.font.family='Nunito,sans-serif';Chart.defaults.color='#4a4650';Chart.defaults.borderColor='#ebe6dd';
+const LOVEY=/love|luv|\bily\b|miss|yaad|\bcare|hug|kiss|cute|pyar|pyari|baby|babu|bby|cutu|\bjaanu?\b|shona|proud|thank|good ?(night|morning)|\bgm\b|\bgn\b|sleep|so ?ja|khana|khaya|paani|dawai|medicine|\bsafe|here for you|always with you|don'?t worry|tension|chinta|it'?s ok|sab theek|mai hu|main hu|i am here|support|beautiful|pretty|smart|sundar|♥|❤|💕|💖|💗|🫶|😘|🥰|😍|🤗|💋/i;
 try{const C=Chart.defaults;C.elements.bar.borderRadius=6;C.elements.bar.borderSkipped=false;C.elements.line.borderCapStyle='round';
  C.plugins.tooltip.backgroundColor='#2b2a2eee';C.plugins.tooltip.cornerRadius=10;C.plugins.tooltip.padding=10;C.plugins.legend.labels.usePointStyle=true;C.plugins.legend.labels.boxWidth=8;C.animation.duration=1000;C.animation.easing='easeOutCubic'}catch(e){}
 
@@ -447,7 +449,7 @@ const PAGES=[
 ];
 function comeback(r,part){
  const top=D.comebacks.slice(0,8).sort((a,b)=>a.back<b.back?-1:1),sl=top.slice(part*4,part*4+4);
- sl.forEach(c=>r.append(E(`<div class="gap"><b>${n(c.hours/24)} days quiet</b>, ${dl(c.from)} to ${dl(c.back)}<br>${c.who=='khushi'?'Khushi':'Harshil'} wrote first:<q>${c.text.replace(/</g,'&lt;')}${c.text.length>=90?'...':''}</q></div>`)));
+ sl.forEach(c=>{const who=c.who=='khushi'?'Khushi':'Harshil',ok=c.text&&LOVEY.test(c.text),lq=!ok&&c.lq,g=E(`<div class="gap"><b>${n(c.hours/24)} days quiet</b>, ${dl(c.from)} to ${dl(c.back)}<br>${who} wrote first${ok?':':'.'}${ok||lq?'<q></q>':''}</div>`);if(ok)g.querySelector('q').textContent=c.text+(c.text.length>=90?'...':'');else if(lq)g.querySelector('q').textContent='Soon after, '+(c.lw=='khushi'?'Khushi':'Harshil')+': '+c.lq;r.append(g)});
  if(part==0){chart(r,{type:'bar',data:{labels:top.map(c=>dl(c.back).slice(0,-5)),datasets:[{data:top.map(c=>c.hours/24),backgroundColor:'#a79bd1'}]},options:{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'days of silence'}}}}});cap(r,'The eight longest silences we had. Each one ended with a message.')}
  if(part==1){const w={khushi:0,harshil:0};D.comebacks.forEach(c=>w[c.who]++);
   chart(r,{type:'doughnut',data:{labels:['Khushi','Harshil'],datasets:[{data:[w.khushi,w.harshil],backgroundColor:[K,H]}]}});
@@ -492,10 +494,10 @@ function diaryEl(){
  const today=istToday(),md=today.slice(5);w.querySelector('.td').textContent=+md.slice(3)+' '+MO[+md.slice(0,2)-1];
  const sweet=/love|miss|cute|baby|babu|cutu|❤|♥|thank|sorry|care/i;
  const show=(d,all)=>{
-  diaryDay=d;inp.value=d;const L=DIARY[d]||[];box.innerHTML='';
-  if(!L.length){head.textContent=d<mn||d>mx?'Our chat starts on '+dl(mn)+' and runs to '+dl(mx)+'.':dl(d)+': we did not talk on this day.';return}
+  diaryDay=d;inp.value=d;const L0=DIARY[d]||[],L=L0.filter(e=>e[3]?(e[2]=='voice note'||/call,/.test(e[2])):LOVEY.test(e[2]));box.innerHTML='';
+  if(!L.length){head.textContent=L0.length?dl(d)+': we talked ('+n(L0.filter(e=>!e[3]).length)+' messages), but no loving lines to show.':d<mn||d>mx?'Our chat starts on '+dl(mn)+' and runs to '+dl(mx)+'.':dl(d)+': we did not talk on this day.';return}
   const tx=L.filter(e=>!e[3]),k=tx.filter(e=>e[1]==0).length,vn=L.filter(e=>e[2]=='voice note').length,cl=L.filter(e=>/call,/.test(e[2])).length;
-  head.textContent=dl(d)+': '+n(tx.length)+' messages (Khushi '+n(k)+', Harshil '+n(tx.length-k)+')'+(vn?', '+n(vn)+' voice note'+(vn>1?'s':''):'')+(cl?', '+n(cl)+' call'+(cl>1?'s':''):'')+'.';
+  head.textContent=dl(d)+': '+n(L0.filter(e=>!e[3]).length)+' messages that day. Love, care and missing: Khushi '+n(k)+', Harshil '+n(tx.length-k)+(vn?', '+n(vn)+' voice note'+(vn>1?'s':''):'')+(cl?', '+n(cl)+' call'+(cl>1?'s':''):'')+'.';
   const cut=all?L.length:150;
   L.slice(0,cut).forEach(e=>{const b=E(`<div class="bub ${e[1]?'harshil':'khushi'}${e[3]?' m':''}"><i></i><span></span></div>`);b.firstChild.textContent=hm12(e[0]);b.lastChild.textContent=e[3]?{'voice note':'🎙️ voice note','photo':'📷 photo','video':'🎞️ video'}[e[2]]||e[2]:e[2];box.append(b)});
   if(L.length>cut){const m=E(`<button style="font:700 19px Caveat,cursive;margin:8px 0;border:1px solid var(--ink);border-radius:99px;background:none;padding:2px 14px;cursor:pointer">Show the rest of this day (${n(L.length-cut)} more)</button>`);m.onclick=()=>show(d,true);box.append(m)}
@@ -629,7 +631,8 @@ const nb=document.getElementById('note');let ni=0;
 function notePool(){const t=istToday();
  const feelingPraise=(window.PRAISE||[]).filter(x=>/proud|best|deserv|mature|smart|magical|smile/i.test(x.t)).map((x,i)=>({...x,u:addDays('2026-10-06',Math.floor(i/2))}));
  const feelings=(D.notes||[]).filter(x=>/love|miss|care|proud|trust|sleep|kha lena|doing really great|have a good day/i.test(x.t)).map((x,i)=>({...x,who:'khushi',u:addDays('2026-10-06',Math.floor(i/3))}));
- return [...feelingPraise,...feelings].filter(x=>x.u<=t).sort((a,b)=>a.u<b.u?1:a.u>b.u?-1:0)}
+ const firsts=(D.firsts||[]).filter(x=>!/very first|first words/.test(x.tag||''));
+ return [...firsts,...feelingPraise,...feelings].filter(x=>x.u<=t).sort((a,b)=>a.u<b.u?1:a.u>b.u?-1:0)}
 function showNote(first){const L=notePool();if(!L.length){nb.style.display='none';return}nb.style.display='';
  const x=L[ni++%L.length],set=()=>{nb.innerHTML=`${x.t}<small>${x.who=='harshil'?'Harshil':'Khushi'}, ${dl(x.d)}${x.tag?', '+x.tag:''}</small>`;nb.classList.remove('f')};
  if(first)set();else{nb.classList.add('f');setTimeout(set,500)}}

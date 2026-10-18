@@ -67,8 +67,10 @@ for a,b in zip(rows,rows[1:]):
 gaps.sort(key=lambda x:-x[0])
 cb=[]
 for g,a,b in gaps[:30]:
-    nxt=next((r for r in rows if r[0]>=b[0] and not re.search(r'call|omitted|attached|deleted',r[2]) and len(r[2])>3),b)
-    cb.append({'hours':round(g),'from':D(a[0]),'back':D(b[0]),'who':nm(b[1]),'text':nxt[2][:90]})
+    q=next((r for r in rows if r[0]>=b[0] and r[1]==b[1] and not re.search(r'call|omitted|attached|deleted|http',r[2]) and len(r[2])>3 and (r[0]-b[0]).total_seconds()<=6*3600),None)
+    LV=re.compile(r"love|luv|miss|yaad|\bcare|hug|cute|pyar|baby|babu|cutu|\bjaanu?\b|proud|♥|❤|🫶|😘|🥰|🤗",re.I)
+    lq=next((r for r in rows if r[0]>=b[0] and (r[0]-b[0]).total_seconds()<=24*3600 and not re.search(r'call|omitted|attached|deleted|http',r[2]) and '\n' not in r[2] and 6<len(r[2])<=100 and LV.search(r[2])),None)
+    cb.append({'hours':round(g),'from':D(a[0]),'back':D(b[0]),'who':nm(b[1]),'text':(q[2][:90] if q else ''),'lq':(lq[2] if lq else ''),'lw':(nm(lq[1]) if lq else '')})
 out['comebacks']=cb
 out['day1']=[{'who':nm(r[1]),'t':r[2][:80]} for r in rows[:14] if 'omitted' not in r[2] and 'attached' not in r[2]]
 # notes pool: Khushi's short sweet lines

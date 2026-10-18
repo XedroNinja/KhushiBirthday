@@ -492,20 +492,20 @@ function diaryEl(){
  const inp=w.querySelector('input'),head=w.querySelector('.dhead'),box=w.querySelector('.dmsgs'),otd=w.querySelector('.otd');
  const mn=START,mx=D.meta.last;inp.min=mn;inp.max=mx;
  const today=istToday(),md=today.slice(5);w.querySelector('.td').textContent=+md.slice(3)+' '+MO[+md.slice(0,2)-1];
- const sweet=/love|miss|cute|baby|babu|cutu|❤|♥|thank|sorry|care/i;
+ const sweet=/love|miss|cute|baby|babu|cutu|❤|♥|thank|care|proud|good ?(night|morning)/i;
  const show=(d,all)=>{
   diaryDay=d;inp.value=d;const L0=DIARY[d]||[],L=L0.filter(e=>e[3]?(e[2]=='voice note'||/call,/.test(e[2])):LOVEY.test(e[2]));box.innerHTML='';
   if(!L.length){head.textContent=L0.length?dl(d)+': we talked ('+n(L0.filter(e=>!e[3]).length)+' messages), but no loving lines to show.':d<mn||d>mx?'Our chat starts on '+dl(mn)+' and runs to '+dl(mx)+'.':dl(d)+': we did not talk on this day.';return}
   const tx=L.filter(e=>!e[3]),k=tx.filter(e=>e[1]==0).length,vn=L.filter(e=>e[2]=='voice note').length,cl=L.filter(e=>/call,/.test(e[2])).length;
   head.textContent=dl(d)+': '+n(L0.filter(e=>!e[3]).length)+' messages that day. Love, care and missing: Khushi '+n(k)+', Harshil '+n(tx.length-k)+(vn?', '+n(vn)+' voice note'+(vn>1?'s':''):'')+(cl?', '+n(cl)+' call'+(cl>1?'s':''):'')+'.';
   const cut=all?L.length:150;
-  L.slice(0,cut).forEach(e=>{const b=E(`<div class="bub ${e[1]?'harshil':'khushi'}${e[3]?' m':''}"><i></i><span></span></div>`);b.firstChild.textContent=hm12(e[0]);b.lastChild.textContent=e[3]?{'voice note':'🎙️ voice note','photo':'📷 photo','video':'🎞️ video'}[e[2]]||e[2]:e[2];box.append(b)});
+  L.slice(0,cut).forEach(e=>{const b=E(`<div class="bub ${e[1]?'harshil':'khushi'}${e[3]?' m':''}"><i></i><span></span></div>`);b.firstChild.textContent=(e[1]?'Harshil':'Khushi')+' · '+hm12(e[0]);b.lastChild.textContent=e[3]?{'voice note':'🎙️ voice note','photo':'📷 photo','video':'🎞️ video'}[e[2]]||e[2]:e[2];box.append(b)});
   if(L.length>cut){const m=E(`<button style="font:700 19px Caveat,cursive;margin:8px 0;border:1px solid var(--ink);border-radius:99px;background:none;padding:2px 14px;cursor:pointer">Show the rest of this day (${n(L.length-cut)} more)</button>`);m.onclick=()=>show(d,true);box.append(m)}
   box.scrollTop=0};
  const step=k=>{const t=new Date(Date.parse((diaryDay||mx)+'T00:00:00Z')+k*864e5).toISOString().slice(0,10);show(t<mn?mn:t>mx?mx:t)};
  const fill=()=>{
   [2023,2024,2025].forEach(y=>{const d=y+'-'+md,L=DIARY[d];if(!L||d>mx||d<mn)return;
-   const tx=L.filter(e=>!e[3]&&e[2].length>=12&&e[2].length<=90),pick=[...tx.filter(e=>sweet.test(e[2])),...tx].filter((e,i,a)=>a.indexOf(e)==i).slice(0,2);
+   const tx=L.filter(e=>!e[3]&&e[2].length>=8&&e[2].length<=90),one=w=>{const m=tx.filter(e=>e[1]==w);return m.find(e=>sweet.test(e[2]))||m.find(e=>LOVEY.test(e[2]))||m[0]||null},pick=[one(0),one(1)].filter(Boolean).sort((a,b)=>a[0]<b[0]?-1:1);
    const it=E(`<div class="otd-item"><b>${y}</b> <small></small></div>`);it.querySelector('small').textContent=n(L.filter(e=>!e[3]).length)+' messages';
    pick.forEach(e=>{const q=E('<q></q>');q.textContent=(e[1]?'Harshil: ':'Khushi: ')+e[2];it.append(q)});
    const b=E('<button>Read this day</button>');b.onclick=()=>{show(d);box.scrollIntoView({behavior:'smooth',block:'nearest'})};it.append(b);otd.append(it)});

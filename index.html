@@ -84,7 +84,7 @@ h2{font:600 clamp(25px,5vw,34px)/1.15 Fraunces,Georgia,serif;margin:8px 0 2px}
 .wall div small{display:block;font-size:15px;color:var(--mute);margin-top:4px}
 .lock{border:1.5px dashed #c9c2b4;color:var(--mute);text-align:center;padding:26px 16px;font:500 24px Caveat,cursive;border-radius:6px}
 .bday{text-align:center}
-.bday .letter{font:600 25px/1.35 Caveat,cursive;max-width:520px;margin:12px auto;text-align:left}
+.bday .letter{font:600 25px/1.5 Caveat,cursive;max-width:590px;margin:18px auto;text-align:left;white-space:pre-line}.bday .birthday-wish{display:block;text-align:center;font:700 clamp(36px,8vw,56px)/1.05 Caveat,cursive;color:var(--rose);margin:4px 0 24px}.bday .letter-end{display:block;text-align:right;margin-top:22px;font-size:28px;color:var(--rose)}
 #ob{display:block;margin:6px auto 0;font:700 21px Caveat,cursive;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:6px 22px;cursor:pointer}
 #bk{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0)}
 #bk[hidden]{display:none}
@@ -354,7 +354,25 @@ html[data-theme=dark] .wall div{color:#2b2a2e}
 /* ---------- things you can edit ---------- */
 const START='2023-06-27';
 const MILESTONES={anniv:'2023-11-18',aug1:['2023-08-01','2024-08-01'],tripDate:'2024-06-13'};
-const LETTER="Khushi, I counted the days, the calls and the sorrys, and every number ended up pointing back to you. Happy birthday. This was never the last page, just the last one of this book.";
+const LETTER=`<span class="birthday-wish">Happy Birthday Rasmalai❤️</span>
+
+Thank you for being there for me through all these years. For listening to me, supporting me, believing in me, and staying beside me through everything.
+
+There were so many times when things felt difficult and I felt like giving up. If you had not been there, I genuinely don't know if I would have kept going. You literally became my support system — the person I could come back to, talk to, complain to, laugh with, and somehow feel a little better after.
+
+You have supported me in ways you probably don't even realize. Through the good days, the stressful days, the confusing days, the fights, the distance, and all the little moments in between — you were there. And I will always be grateful for that.
+
+This whole scrapbook was my small way of going back through our years together and showing you that I remember. The conversations, the care, the missing each other, the stupid moments, the difficult ones, and all the love in between.
+
+So this is the page everything was leading to.
+
+Thank you for being you. Thank you for being my Rasmalai. Thank you for being such an important part of my life and for being my support system when I needed one the most.
+
+I hope this birthday brings you all the happiness, love, peace and everything you deserve.
+
+Happy Birthday, Khushi. ❤️
+
+<span class="letter-end">— Harshil</span>`;
 /* ----------------------------------------- */
 let SINK=null;const D=DATA,K='#c9566f',H='#6a6fb3',MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const n=x=>Math.round(x).toLocaleString('en-IN');

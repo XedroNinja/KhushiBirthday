@@ -522,7 +522,7 @@ const PAGES=[
  r.append(E(`<div class="row">${stat(n(m.span_days),'days',-2)}${stat(n(m.total),'messages',2)}${stat(n(c.n),'calls',-1)}${stat(n(c.hours)+' h','on call',1)}${stat(m.streak,'day streak',-2)}${stat(n(t('love')),'love yous',2)}</div>`));
  chart(r,{type:'bar',data:B2(['Love you','Miss you','Sorry','Hearts / 10'],[kwT('love','khushi'),kwT('miss','khushi'),kwT('sorry','khushi'),Math.round(kwT('heart','khushi')/10)],[kwT('love','harshil'),kwT('miss','harshil'),kwT('sorry','harshil'),Math.round(kwT('heart','harshil')/10)])});
  cap(r,'Tomorrow is your day. Come back at 12:00 am.')}],
-['','Happy birthday, Khushi','27 October',(r)=>{r.classList.add('bday');r.append(E(`<div class="big">🎂</div><div class="letter">${LETTER}</div>`))}]
+['','Happy birthday, Khushi','27 October',(r)=>{r.classList.add('bday');const cake=E('<div class="big">🎂</div>'),letter=E('<div class="letter"></div>');letter.innerHTML=LETTER;r.append(cake,letter)}]
 ];
 function comeback(r,part){
  const top=D.comebacks.slice(0,8).sort((a,b)=>a.back<b.back?-1:1),sl=top.slice(part*4,part*4+4);

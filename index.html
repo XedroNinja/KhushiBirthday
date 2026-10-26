@@ -84,7 +84,7 @@ h2{font:600 clamp(25px,5vw,34px)/1.15 Fraunces,Georgia,serif;margin:8px 0 2px}
 .wall div small{display:block;font-size:15px;color:var(--mute);margin-top:4px}
 .lock{border:1.5px dashed #c9c2b4;color:var(--mute);text-align:center;padding:26px 16px;font:500 24px Caveat,cursive;border-radius:6px}
 .bday{text-align:center}
-.bday .letter{font:600 25px/1.5 Caveat,cursive;max-width:590px;margin:18px auto;text-align:left;white-space:pre-line}.bday .birthday-wish{display:block;text-align:center;font:700 clamp(36px,8vw,56px)/1.05 Caveat,cursive;color:var(--rose);margin:4px 0 24px}.bday .letter-end{display:block;text-align:right;margin-top:22px;font-size:28px;color:var(--rose)}
+.bday .letter{font:600 25px/1.5 Caveat,cursive;max-width:590px;margin:18px auto;text-align:left;white-space:pre-line}.bday .birthday-wish{display:block;text-align:center;font:700 clamp(36px,8vw,56px)/1.05 Caveat,cursive;color:var(--rose);margin:4px 0 24px}.bday .letter-end{display:block;text-align:right;margin-top:22px;font-size:28px;color:var(--rose)}.pdf-download{display:inline-block;margin:30px auto 8px;border:0;border-radius:999px;padding:12px 22px;background:var(--rose);color:#fff;font:700 21px Caveat,cursive;cursor:pointer;box-shadow:0 10px 26px #c9566f30}.pdf-download:disabled{opacity:.6;cursor:wait}
 #ob{display:block;margin:6px auto 0;font:700 21px Caveat,cursive;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:6px 22px;cursor:pointer}
 #bk{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0)}
 #bk[hidden]{display:none}
@@ -522,8 +522,28 @@ const PAGES=[
  r.append(E(`<div class="row">${stat(n(m.span_days),'days',-2)}${stat(n(m.total),'messages',2)}${stat(n(c.n),'calls',-1)}${stat(n(c.hours)+' h','on call',1)}${stat(m.streak,'day streak',-2)}${stat(n(t('love')),'love yous',2)}</div>`));
  chart(r,{type:'bar',data:B2(['Love you','Miss you','Sorry','Hearts / 10'],[kwT('love','khushi'),kwT('miss','khushi'),kwT('sorry','khushi'),Math.round(kwT('heart','khushi')/10)],[kwT('love','harshil'),kwT('miss','harshil'),kwT('sorry','harshil'),Math.round(kwT('heart','harshil')/10)])});
  cap(r,'Tomorrow is your day. Come back at 12:00 am.')}],
-['','Happy birthday, Khushi','27 October',(r)=>{r.classList.add('bday');r.append(E(`<div class="big">🎂</div><div class="letter">${LETTER}</div>`))}]
+['','Happy birthday, Khushi','27 October',(r)=>{r.classList.add('bday');r.append(E(`<div class="big">🎂</div><div class="letter">${LETTER}</div><button class="pdf-download" type="button">Download our scrapbook as PDF ♡</button>`));r.querySelector('.pdf-download').onclick=downloadScrapbookPDF}]
 ];
+async function downloadScrapbookPDF(e){
+ const btn=e&&e.currentTarget;if(btn){btn.disabled=true;btn.textContent='Preparing our scrapbook…'}
+ const oldTitle=document.title,host=document.createElement('div');host.className='pdf-book';host.style.display='none';document.body.append(host);
+ const charts=[];const prevSink=SINK;SINK=charts;
+ try{
+  PAGES.forEach((p,i)=>{const el=pageEl(i,false);host.append(el);p[3](el);cuteAdd(el,p[1])});
+  await new Promise(res=>setTimeout(res,900));
+  const w=window.open('','_blank');
+  if(!w)throw new Error('popup');
+  const pages=[...host.querySelectorAll(':scope > .page')].map((el,i)=>{
+   el.querySelectorAll('button,input').forEach(x=>x.remove());
+   el.querySelectorAll('canvas').forEach(cv=>{try{const im=document.createElement('img');im.src=cv.toDataURL('image/png',1);im.style.cssText='width:100%;max-height:360px;object-fit:contain;display:block;margin:10px auto';cv.replaceWith(im)}catch(_){}});
+   return `<section class="sheet">${el.outerHTML}</section>`
+  }).join('');
+  const styles=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');
+  w.document.open();w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Harshil & Khushi — Our Scrapbook</title><style>${styles}
+  body{background:#fff!important;padding:0!important}.sheet{page-break-after:always;break-after:page;padding:12mm 8mm}.sheet:last-child{page-break-after:auto;break-after:auto}.sheet>.page{max-width:780px;margin:0 auto;transform:none!important;box-shadow:none!important}.pdf-download,.new{display:none!important}@page{size:A4;margin:8mm}@media print{.sheet{padding:0}.page{break-inside:avoid}canvas{max-width:100%}}</style></head><body>${pages}<script>window.onload=()=>setTimeout(()=>window.print(),500)<\/script></body></html>`);w.document.close();
+ }catch(err){alert(err.message==='popup'?'Please allow pop-ups, then tap the PDF button again.':'I could not prepare the PDF. Please try again.')}
+ finally{SINK=prevSink;charts.forEach(x=>{try{x.destroy()}catch(_){}});host.remove();document.title=oldTitle;if(btn){btn.disabled=false;btn.textContent='Download our scrapbook as PDF ♡'}}
+}
 function comeback(r,part){
  const top=D.comebacks.slice(0,8).sort((a,b)=>a.back<b.back?-1:1),sl=top.slice(part*4,part*4+4);
  sl.forEach(c=>{const who=c.who=='khushi'?'Khushi':'Harshil',g=E(`<div class="gap"><b>${n(c.hours/24)} days quiet</b>, ${dl(c.from)} to ${dl(c.back)}<br>${who} wrote first${c.text?':<q></q>':'.'}</div>`);if(c.text)g.querySelector('q').textContent=c.text;r.append(g)});

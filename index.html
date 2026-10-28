@@ -553,7 +553,7 @@ function render(){
  document.getElementById('hd').textContent=open.length?'Page '+open.length+' of '+PAGES.length+', '+sd(open[open.length-1][0]):'Page 1 opens '+sd(PAGES[0][0]);
  book.innerHTML='';
  if(next)book.append(E(`<div class="lock">Page ${open.length+1} opens ${dl(next[0])}, 12:00 am<br><b class="tick" data-t="${next[0]}"></b></div>`));
- if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1]);book.append(diaryEl());book.append(quizEl())}
+ if(open.length){const i=open.length-1,el=pageEl(i,i>0);book.append(el);open[i][3](el);cuteAdd(el,open[i][1]);book.append(quizEl())}
  document.getElementById('ob').style.display=open.length?'block':'none'}
 render();setInterval(()=>{if(openPages().length!=shown)render()},30000);
 
